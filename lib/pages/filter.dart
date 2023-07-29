@@ -1,6 +1,9 @@
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../components/styles.dart' as style;
+import '/class/FilterSearch.dart';
+import '/values/FilterSearch.dart';
 
 class Filter extends StatefulWidget {
   static const String id = 'Filter';
@@ -8,28 +11,58 @@ class Filter extends StatefulWidget {
   const Filter({Key? key}) : super(key: key);
 
   @override
-  _FilterState createState() => _FilterState();
+  FilterState createState() => FilterState();
 }
 
-class _FilterState extends State<Filter> {
+class FilterState extends State<Filter> {
+  late SharedPreferences prefs;
   bool isShow = false;
   bool isShare = false;
-  RangeValues distance = const RangeValues(40, 80);
-  RangeValues age = const RangeValues(40, 80);
-  String dropdownValue = 'Men';
+  String dropdownValue = FilterElementValue.gentle;
+  RangeValues distance=const RangeValues(0, 50);
+  RangeValues age=const RangeValues(20, 50);
   @override
   void initState() {
+    initDefaultValue();
     super.initState();
   }
-
+  
+  initDefaultValue() async{
+    prefs = await SharedPreferences.getInstance();
+    String gentle = prefs.getString(FilterElementValue.gentle)??'Other';
+    double minAge = prefs.getDouble(FilterElementValue.ageMin)??20;
+    double maxAge = prefs.getDouble(FilterElementValue.ageMax)??50;
+    double mindistance = prefs.getDouble(FilterElementValue.distanceMin)??0;
+    double maxdistance = prefs.getDouble(FilterElementValue.distanceMax)??50;
+    setState(() {
+      dropdownValue = gentle;
+      age=RangeValues(minAge, maxAge);
+      distance=RangeValues(mindistance, maxdistance);
+    });
+ }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 243, 243, 243),
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
+          onPressed: () async{
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            await prefs.setString(FilterElementValue.gentle, dropdownValue);
+            await prefs.setDouble(FilterElementValue.distanceMin, distance.start);
+            await prefs.setDouble(FilterElementValue.distanceMax, distance.end);
+            await prefs.setDouble(FilterElementValue.ageMin, age.start);
+            await prefs.setDouble(FilterElementValue.ageMax, age.end);
+            
+            // ignore: use_build_context_synchronously
+            Navigator.pop(context,FilterElement(
+              gentle: dropdownValue,
+              distanceMin: distance.start.toInt(),
+              distanceMax: distance.end.toInt(),
+              ageMin: age.start.toInt(),
+              ageMax: age.end.toInt()
+              )
+              );
           },
           icon: const Icon(
             Icons.chevron_left,
@@ -59,9 +92,9 @@ class _FilterState extends State<Filter> {
             Container(
               padding: const EdgeInsets.all(16),
               color: Colors.white,
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const <Widget>[
+                children: <Widget>[
                   Text('Location'),
                   Icon(
                     Icons.location_on,
@@ -72,6 +105,7 @@ class _FilterState extends State<Filter> {
             ),
             _buildGreyLabel(
                 'Change your location to see dating members in other cities'),
+            //-------------------------------------------------------Men-Women
             Container(
               padding: const EdgeInsets.all(16),
               margin: const EdgeInsets.only(bottom: 16),
@@ -86,6 +120,7 @@ class _FilterState extends State<Filter> {
                 ],
               ),
             ),
+            //-------------------------------------------------------Maximun distance
             Container(
               width: double.infinity,
               margin: const EdgeInsets.only(bottom: 16),
@@ -119,6 +154,7 @@ class _FilterState extends State<Filter> {
                 ],
               ),
             ),
+            //-------------------------------------------------------Age
             Container(
               width: double.infinity,
               margin: const EdgeInsets.only(bottom: 16),
@@ -152,6 +188,7 @@ class _FilterState extends State<Filter> {
                 ],
               ),
             ),
+            //------------------------------------------------------------------
             _buildGreyLabel(
                 'Sharing your social content will greatly increase your chances of receiving messages!'),
             Container(

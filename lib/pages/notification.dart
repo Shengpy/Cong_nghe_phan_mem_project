@@ -1,35 +1,35 @@
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../components/styles.dart' as style;
 
+class Notification{
+  String content;
+  String date;
+  String sender;
+
+  Notification({this.content='',this.date='',this.sender=''});
+}
 class Notifications extends StatefulWidget {
   static const String id = 'Notifications';
 
   const Notifications({Key? key}) : super(key: key);
 
   @override
-  _NotificationsState createState() => _NotificationsState();
+  NotificationsState createState() => NotificationsState();
 }
-
-class _NotificationsState extends State<Notifications>
+DateTime now = DateTime.now();
+String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(now);
+class NotificationsState extends State<Notifications>
     with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
   }
-
-  final List _elements = [
-    '1',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9',
-    '10',
-    '11'
+  final List<Notification> _elements = [
+    Notification(content:'Khang want to add friend',date:formattedDate),
+    Notification(content:'You are stupid',date:formattedDate),
+    Notification(content:'You are hacked by Sheng',date:formattedDate),
   ];
   @override
   Widget build(BuildContext context) {
@@ -55,13 +55,13 @@ class _NotificationsState extends State<Notifications>
         physics: const ScrollPhysics(),
         shrinkWrap: true,
         children: _elements.map((e) {
-          return _buildChatModule(context);
+          return _buildChatModule(context,e);
         }).toList(),
       ),
     );
   }
 
-  Widget _buildChatModule(context) {
+  Widget _buildChatModule(context,Notification content) {
     return Container(
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.all(16),
@@ -90,17 +90,17 @@ class _NotificationsState extends State<Notifications>
               ),
             ),
             Expanded(
-                child: Container(
+              child: Container(
               padding: const EdgeInsets.only(left: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const <Widget>[
-                  Text('like first chat with her',
-                      style: TextStyle(fontFamily: "semi-bold", fontSize: 16)),
+                children: <Widget>[
+                  Text(content.content,
+                      style: const TextStyle(fontFamily: "semi-bold", fontSize: 16)),
                   Padding(
-                    padding: EdgeInsets.only(top: 5),
-                    child: Text('8.20 AM',
-                        style: TextStyle(color: Colors.grey, fontSize: 12)),
+                    padding: const EdgeInsets.only(top: 5),
+                    child: Text(content.date,
+                        style: const TextStyle(color: Colors.grey, fontSize: 12)),
                   ),
                 ],
               ),

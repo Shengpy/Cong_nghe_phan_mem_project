@@ -1,9 +1,12 @@
+import 'package:flutter_application_1/class/database.dart';
+import 'package:flutter_application_1/values/loginstatus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '/pages/login/login.dart';
 import '/pages/friend_profile.dart';
 import '/pages/myprofile.dart';
 import '/pages/verification.dart';
 import 'package:flutter/material.dart';
-// import '/pages/login.dart';
 import '/pages/welcome.dart';
 import '/pages/home.dart';
 import '/pages/tabs.dart';
@@ -15,31 +18,21 @@ import '/pages/Filter.dart';
 import '/pages/Setting.dart';
 import '/pages/editProfile.dart';
 import '/pages/chat.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_application_1/class/Account.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import '../components/styles.dart' as style;
 
 void main() async{
   // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
   //   systemNavigationBarColor: Colors.transparent, // navigation bar color
   //   statusBarColor: Colors.black, // status bar color
   // ));
-  await _initHive();
-  runApp(const DateApp());
-}
-
-Future<void> _initHive() async{
-  await Hive.initFlutter();
-  //------------------regist adapter
-  Hive.registerAdapter<Account>(AccountAdapter());
-  await Hive.openBox("login");
-  // Hive.deleteBoxFromDisk("accounts");
-  await Hive.openBox("accounts");
-  Hive.box("accounts").clear();
+  WidgetsFlutterBinding.ensureInitialized;
+  await MongoDatabase.connect();
+  SharedPreferences prefs =await SharedPreferences.getInstance();
+  String username=prefs.getString(MyAccount.username)??'';
+  runApp(DateApp(username:username));
 }
 class DateApp extends StatelessWidget {
-  const DateApp({Key? key}) : super(key: key);
+  final String username;
+  const DateApp({super.key,required this.username});
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +47,7 @@ class DateApp extends StatelessWidget {
           seedColor: const Color.fromRGBO(32, 63, 129, 1.0),
         ),
       ),
-      initialRoute: Login.id,
+      initialRoute: username.isNotEmpty ?TabsExample.id:Login.id,
       // initialRoute: TabsExample.id,
       debugShowCheckedModeBanner: false,
       routes: {

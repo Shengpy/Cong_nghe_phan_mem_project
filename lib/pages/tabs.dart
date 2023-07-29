@@ -12,6 +12,7 @@ class TabsExample extends StatefulWidget {
   static const String id = 'Tabs';
 
   @override
+  // ignore: library_private_types_in_public_api
   _TabsExampleState createState() => _TabsExampleState();
 }
 

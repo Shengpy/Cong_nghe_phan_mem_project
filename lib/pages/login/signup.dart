@@ -1,6 +1,6 @@
+import '../../class/database.dart';
 import '/class/Account.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -10,7 +10,7 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
-  static const String id = 'sig';
+  static const String id = 'signup';
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   final FocusNode _focusNodeEmail = FocusNode();
@@ -19,10 +19,18 @@ class _SignupState extends State<Signup> {
   final TextEditingController _controllerUsername = TextEditingController();
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
-  final TextEditingController _controllerConFirmPassword =
-      TextEditingController();
+  final TextEditingController _controllerConFirmPassword = TextEditingController();
+  List<Account> accounts=MongoDatabase.accounts;
 
-  final Box _boxAccounts = Hive.box("accounts");
+  bool checkUsername(String a){
+    for (var i = 0; i < accounts.length; i++){
+      if(accounts[i].username==a){
+        return true;
+      }
+    }
+    return false;
+  }
+
   bool _obscurePassword = true;
 
   @override
@@ -62,7 +70,7 @@ class _SignupState extends State<Signup> {
                 validator: (String? value) {
                   if (value == null || value.isEmpty) {
                     return "Please enter username.";
-                  } else if (_boxAccounts.containsKey(value)) {
+                  } else if (checkUsername(value)) {
                     return "Username is already registered.";
                   }
 
@@ -178,21 +186,10 @@ class _SignupState extends State<Signup> {
                       ),
                     ),
                     onPressed: () {
-                          // var person = Person()
-                          // ..username = 'Dave'
-                          // ..password = 'haha';
-                          // _boxAccounts.put('lala',person);
-                          // print(_boxAccounts.keys);
-                          // print(_boxAccounts.values);
-                          // print("okalalla");
                       if (_formKey.currentState?.validate() ?? false) {
-                        _boxAccounts.put(
-                          _controllerUsername.text,
-                          Account(_controllerUsername.text,_controllerConFirmPassword.text),
+                        MongoDatabase.insert(Account(username:_controllerUsername.text,password:_controllerConFirmPassword.text));
+                        MongoDatabase.loadData();
 
-                        );
-                          // print(_boxAccounts.keys);
-                          // print(_boxAccounts.values);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             width: 200,

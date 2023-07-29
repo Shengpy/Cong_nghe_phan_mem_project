@@ -1,6 +1,14 @@
 
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../class/database.dart';
+import '../values/loginstatus.dart';
+import '/class/Account.dart';
+import '/pages/login/login.dart';
+
 import '/pages/chat.dart';
 import '/pages/filter.dart';
+import '/class/FilterSearch.dart';
 import 'package:flutter/material.dart';
 import 'package:tcard/tcard.dart';
 import '../components/styles.dart' as style;
@@ -19,51 +27,117 @@ List<String> images = [
   "assets/images/user11.jpg",
 ];
 
-List<Widget> cards = List.generate(
-  images.length,
-  (int index) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.0),
-        boxShadow: const [
-          BoxShadow(
-            offset: Offset(0, 17),
-            blurRadius: 23.0,
-            spreadRadius: -13.0,
-            color: Colors.black54,
-          )
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16.0),
-        child: Image.asset(
-          images[index],
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
-  },
-);
-
 class Home extends StatefulWidget {
   static const String id = 'home';
 
   const Home({Key? key}) : super(key: key);
 
   @override
-  _HomeState createState() => _HomeState();
+  HomeState createState() => HomeState();
 }
 
-class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
-  TCardController _controller = TCardController();
+class HomeState extends State<Home> with SingleTickerProviderStateMixin {
+  final TCardController _controller = TCardController();
 
+  // ignore: unused_field
   int _index = 0;
+  late Account acc;
+  late List<Widget> cards;
+  List<Account> accounts=MongoDatabase.accounts;
+  List<Account> filteredaccounts=[];
+  Account a=Account();
+  Account b=Account();
+  late SharedPreferences prefs;
   @override
   void initState() {
+    a.info.updateImage("assets/images/user1.jpg");
+    a.info.updateGentle("Woman");
+    a.info.setAge(27);
+    a.info.setName('Tai');
+    accounts.add(a);
+    b.info.updateImage("assets/images/user2.jpg");
+    b.info.updateGentle("Men");
+    b.info.setAge(47);
+    b.info.setName('Vinh');
+    accounts.add(b);
     super.initState();
+    // filter(FilterElement());
+    generateCards(accounts);
+    getMyAcc();
   }
-
+  void getMyAcc()async{
+    prefs = await SharedPreferences.getInstance();
+    String? username = prefs.getString(MyAccount.username);
+    for (var i = 0; i < accounts.length; i++){
+      if(username==accounts[i].username){
+        acc=accounts[i];
+      }
+   }
+  }
+  void filter(FilterElement value) {
+    filteredaccounts=[];
+    if (value.gentle=='Men' || value.gentle=='Woman'){
+      for (var i = 0; i < accounts.length; i++){
+        if(accounts[i].info.gentle==value.gentle && accounts[i].info.age<=value.ageMax && accounts[i].info.age>= value.ageMin){
+          filteredaccounts.add(accounts[i]);
+        }
+      }
+    }
+    else {
+      for (var i = 0; i < accounts.length; i++){
+        if(accounts[i].info.age<=value.ageMax && accounts[i].info.age>= value.ageMin){
+          filteredaccounts.add(accounts[i]);
+        }
+      }
+    }
+    setState(() {
+      generateCards(filteredaccounts);
+      _controller.reset(cards:cards);
+    });
+  }
+  void search(List<Account> listAcc,String findWord){
+    List<Account> searchaccounts=[];
+    for (var i = 0; i < listAcc.length; i++){
+      if(listAcc[i].info.name.contains(findWord)){
+        searchaccounts.add(listAcc[i]);
+      }
+    }
+    setState(() {
+      generateCards(searchaccounts);
+      _controller.reset(cards:cards);
+    });
+  }
+  void generateCards(List<Account> genAcc){
+    if (genAcc.isEmpty){
+      genAcc.add(Account());
+    }
+    cards = List.generate(
+    genAcc.length,
+    (int index) {
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.0),
+          boxShadow: const [
+            BoxShadow(
+              offset: Offset(0, 17),
+              blurRadius: 23.0,
+              spreadRadius: -13.0,
+              color: Colors.black54,
+            )
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16.0),
+          child: Image.asset(
+            genAcc[index].info.image,
+            fit: BoxFit.cover,
+          ),
+        ),
+      );
+    },
+  );
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,28 +153,61 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               color: Colors.white,
               border: Border.all(width: 1, color: Colors.black12),
               borderRadius: BorderRadius.circular(30)),
-          child: const Padding(
+          //--------------------------------search
+          child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: TextField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   fillColor: Colors.white,
                   hintText: 'Search for match',
                   prefixIcon: Icon(Icons.search),
                   border: InputBorder.none),
+              onChanged: (value) {
+                  setState(() { 
+                    search(filteredaccounts,value);
+                  });
+              },
             ),
+            
           ),
         ),
+        //----------------------------filter
         actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const Filter()));
-            },
-            icon: const Icon(
-              Icons.filter_alt_outlined,
-              size: 30,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: IconButton(
+              onPressed: () async{
+                FilterElement receivedData = await Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => const Filter()));
+                filter(receivedData);
+              },
+              icon: const Icon(
+                Icons.filter_alt_outlined,
+                size: 30,
+              ),
             ),
-          )
+          ),
+          //-----------------------------------log out
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: IconButton(
+                  onPressed: () async{
+                    prefs = await SharedPreferences.getInstance();
+                    prefs.setString(MyAccount.username, "");
+                    
+                    if (!mounted) return;
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return const Login();
+                        },
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.logout_rounded),
+                ),
+          ),
         ],
       ),
       body: Center(
@@ -112,26 +219,44 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               onForward: (index, info) {
                 _index = index;
                 setState(() {});
+                if (info.direction == SwipDirection.Right) {
+                  // acc.addPersons();
+                  // ignore: avoid_print
+                  print('like');
+                }
+                // print('forward');
               },
               onBack: (index, info) {
                 _index = index;
                 setState(() {});
+                // print('back');
               },
               onEnd: () {
-                print('end');
+                // print('end');
               },
             ),
             const SizedBox(height: 20),
-            _index != cards.length
-                ? Container(
+                Container(
                     margin: const EdgeInsets.symmetric(vertical: 48.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
+                        //----------------------------back button
                         FloatingActionButton(
                           onPressed: () {
                             _controller.back();
+                          },
+                          heroTag: 'back',
+                          backgroundColor: Colors.white,
+                          child: const Icon(Icons.arrow_back_ios_new,
+                              color: style.appColor, size: 30),
+                        ),
+                        const Padding(padding: EdgeInsets.only(right: 40.0)),
+                        //------------------------------cancel button
+                        FloatingActionButton(
+                          onPressed: () {
+                            _controller.forward(direction:SwipDirection.Left);
                           },
                           heroTag: 'cancel',
                           backgroundColor: Colors.white,
@@ -139,6 +264,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                               color: style.appColor, size: 30),
                         ),
                         const Padding(padding: EdgeInsets.only(right: 40.0)),
+                        //------------------------------message button
                         FloatingActionButton(
                           onPressed: () {
                             Navigator.push(
@@ -152,9 +278,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                               color: style.appColor, size: 30),
                         ),
                         const Padding(padding: EdgeInsets.only(right: 40.0)),
+                        //-----------------------------love button
                         FloatingActionButton(
                           onPressed: () {
-                            _controller.forward();
+                            _controller.forward(direction:SwipDirection.Right);
                           },
                           backgroundColor: Colors.white,
                           heroTag: 'like',
@@ -164,9 +291,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       ],
                     ),
                   )
-                : Container(
-                    child: (const Text('Swiped')),
-                  )
           ],
         ),
       ),
@@ -175,10 +299,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   Widget _buildBody() {
     return SingleChildScrollView(
+      // ignore: avoid_unnecessary_containers
       child: Container(
-        child: Column(
+        child: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [],
+          children: [],
         ),
       ),
     );

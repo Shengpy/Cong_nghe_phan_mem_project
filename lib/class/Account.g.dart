@@ -3,94 +3,40 @@
 part of 'Account.dart';
 
 // **************************************************************************
-// TypeAdapterGenerator
+// JsonSerializableGenerator
 // **************************************************************************
 
-class AccountAdapter extends TypeAdapter<Account> {
-  @override
-  final int typeId = 0;
+Account _$AccountFromJson(Map<String, dynamic> json) => Account(
+      username: json['username'] as String? ?? '',
+      password: json['password'] as String? ?? '',
+    )..info = Person.fromJson(json['info'] as Map<String, dynamic>);
 
-  @override
-  Account read(BinaryReader reader) {
-    final numOfFields = reader.readByte();
-    final fields = <int, dynamic>{
-      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+Map<String, dynamic> _$AccountToJson(Account instance) => <String, dynamic>{
+      'username': instance.username,
+      'password': instance.password,
+      'info': instance.info.toJson(),
     };
-    return Account(
-      fields[0] as String,
-      fields[1] as String,
-    );
-  }
 
-  @override
-  void write(BinaryWriter writer, Account obj) {
-    writer
-      ..writeByte(2)
-      ..writeByte(0)
-      ..write(obj.username)
-      ..writeByte(1)
-      ..write(obj.password);
-  }
-
-  @override
-  int get hashCode => typeId.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is AccountAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
-}
-
-class PersonAdapter extends TypeAdapter<Person> {
-  @override
-  final int typeId = 1;
-
-  @override
-  Person read(BinaryReader reader) {
-    final numOfFields = reader.readByte();
-    final fields = <int, dynamic>{
-      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
-    };
-    return Person(
-      fields[0] as String,
-      fields[1] as int,
+Person _$PersonFromJson(Map<String, dynamic> json) => Person(
+      name: json['name'] as String? ?? '',
+      age: json['age'] as int? ?? 0,
     )
-      ..address = fields[2] as String
-      ..phoneNumber = fields[3] as String
-      ..education = fields[4] as String
-      ..sexualOrentation = fields[5] as String
-      ..describe = fields[6] as String;
-  }
+      ..gentle = json['gentle'] as String
+      ..address = json['address'] as String
+      ..phoneNumber = json['phoneNumber'] as String
+      ..education = json['education'] as String
+      ..sexualOrentation = json['sexualOrentation'] as String
+      ..describe = json['describe'] as String
+      ..image = json['image'] as String;
 
-  @override
-  void write(BinaryWriter writer, Person obj) {
-    writer
-      ..writeByte(7)
-      ..writeByte(0)
-      ..write(obj.name)
-      ..writeByte(1)
-      ..write(obj.age)
-      ..writeByte(2)
-      ..write(obj.address)
-      ..writeByte(3)
-      ..write(obj.phoneNumber)
-      ..writeByte(4)
-      ..write(obj.education)
-      ..writeByte(5)
-      ..write(obj.sexualOrentation)
-      ..writeByte(6)
-      ..write(obj.describe);
-  }
-
-  @override
-  int get hashCode => typeId.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is PersonAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
-}
+Map<String, dynamic> _$PersonToJson(Person instance) => <String, dynamic>{
+      'name': instance.name,
+      'age': instance.age,
+      'gentle': instance.gentle,
+      'address': instance.address,
+      'phoneNumber': instance.phoneNumber,
+      'education': instance.education,
+      'sexualOrentation': instance.sexualOrentation,
+      'describe': instance.describe,
+      'image': instance.image,
+    };

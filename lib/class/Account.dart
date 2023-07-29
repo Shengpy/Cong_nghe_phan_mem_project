@@ -1,43 +1,50 @@
 // ignore_for_file: file_names
 // ignore: depend_on_referenced_packages
-import 'package:hive/hive.dart';
+import 'package:json_annotation/json_annotation.dart';
 part 'Account.g.dart';
-@HiveType(typeId: 0)
+
+@JsonSerializable(explicitToJson: true)
 class Account{
-  @HiveField(0)
   late String username;
-  @HiveField(1)
   late String password;
-  @HiveType(typeId: 1)
-  late Person info;
+  Person info=Person();
   
-  Account(this.username,this.password);
+  Account({this.username='',this.password=''});
+  factory Account.fromJson(Map<String, dynamic> json) => _$AccountFromJson(json);
+  Map<String, dynamic> toJson() => _$AccountToJson(this);
 }
-@HiveType(typeId: 1)
+
+@JsonSerializable()
 class Person{
-  @HiveField(0)
-  late String name;
-  @HiveField(1)
-  late int age;
-  @HiveField(2)
-  late String address;
-  @HiveField(3)
-  late String phoneNumber;
-  @HiveField(4)
-  late String education;
-  @HiveField(5)
-  late String sexualOrentation;
-  @HiveField(6)
-  late String describe;
+  String name='';
+  int age;
+  String gentle='';
+  String address='';
+  String phoneNumber='';
+  String education='';
+  String sexualOrentation='';
+  String describe='';
+  // @HiveType(typeId: 1)
+  // late List<Person> favoritePersons;
+  String image='assets/images/Unknown_person.jpg';
   
-  Person(this.name,this.age);
+  Person({this.name='',this.age=0});
+  factory Person.fromJson(Map<String, dynamic> json) => _$PersonFromJson(json);
+  Map<String, dynamic> toJson() => _$PersonToJson(this);
+  void updateImage(String a){image=a;}
+  void updateGentle(String a){gentle=a;}
   void setName(String a){name=a;}
   bool setAge(int a){
-    if(age<=0){
+    if(a<=0){
       return false;
     }
     age=a;
     return true;
   }
   void setDescribe(String a){describe=a;}
+  // bool addPersons(Person a){
+  //   if(favoritePersons.contains(a)){return false;}
+  //   favoritePersons.add(a);
+  //   return true;
+  // }
 }

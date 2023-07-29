@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/values/loginstatus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 // ignore: depend_on_referenced_packages
-import 'package:hive_flutter/hive_flutter.dart';
 
+import '../../class/Account.dart';
+import '../../class/database.dart';
 import '../tabs.dart';
 import 'signup.dart';
 
@@ -21,16 +24,30 @@ class _LoginState extends State<Login> {
   final FocusNode _focusNodePassword = FocusNode();
   final TextEditingController _controllerUsername = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
+  List<Account> accounts=MongoDatabase.accounts;
+  late SharedPreferences prefs;
 
   bool _obscurePassword = true;
-  final Box _boxLogin = Hive.box("login");
-  final Box _boxAccounts = Hive.box("accounts");
+
+  bool checkUser(String a,String b,String c){
+    for (var i = 0; i < accounts.length; i++){
+      if(accounts[i].username==a){
+        if(c=="username")
+          {return true;}
+        if(c=="password")
+        {
+          if (accounts[i].password==b){
+            return false;
+          }
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (_boxLogin.get("loginStatus") ?? false) {
-      return const TabsExample();
-    }
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
@@ -67,9 +84,8 @@ class _LoginState extends State<Login> {
                 onEditingComplete: () => _focusNodePassword.requestFocus(),
                 validator: (String? value) {
                   if (value == null || value.isEmpty) {
-                    _boxAccounts.clear();
                     return "Please enter username.";
-                  } else if (!_boxAccounts.containsKey(value)) {
+                  } else if (!checkUser(value,'','username')) {
                     return "Username is not registered.";
                   }
 
@@ -102,14 +118,11 @@ class _LoginState extends State<Login> {
                   ),
                 ),
                 validator: (String? value) {
-                  if(_boxAccounts.containsKey(value)){
                     if (value == null || value.isEmpty) {
                       return "Please enter password.";
-                    } else if (value !=
-                        _boxAccounts.get(_controllerUsername.text).password) {
+                    } else if (checkUser(_controllerUsername.text,value,"password")) {
                       return "Wrong password.";
                     }
-                  }
 
                   return null;
                 },
@@ -125,11 +138,12 @@ class _LoginState extends State<Login> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                     ),
-                    onPressed: () {
+                    onPressed: () async{
                       if (_formKey.currentState?.validate() ?? false) {
-                        _boxLogin.put("loginStatus", true);
-                        _boxLogin.put("account", _boxAccounts.get(_controllerUsername.text));
+                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                        await prefs.setString(MyAccount.username, _controllerUsername.text);
 
+                        if (!mounted) return;
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
@@ -138,6 +152,7 @@ class _LoginState extends State<Login> {
                             },
                           ),
                         );
+                        
                       }
                     },
                     child: const Text("Login"),
