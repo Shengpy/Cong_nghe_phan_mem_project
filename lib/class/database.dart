@@ -1,15 +1,19 @@
 // ignore_for_file: constant_identifier_names
-  
+
 import 'dart:developer';
 
 import 'package:flutter_application_1/class/Account.dart';
 import 'package:mongo_dart/mongo_dart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../values/loginstatus.dart';
 
 const MONGO_URL="mongodb+srv://kysheng12345:Sheng12345@cluster0.to3nj7r.mongodb.net/?retryWrites=true&w=majority";
 const COLLECTION_NAME="user";
 class MongoDatabase{
   static dynamic db;
   static dynamic collection;
+  static Account myAcc=Account();
   static List<Account> accounts=[];
   
   static connect() async{
@@ -17,8 +21,8 @@ class MongoDatabase{
     await db.open();
     inspect(db);
     collection = db.collection(COLLECTION_NAME);
-    collection.find().forEach((user)=>print(user));
-    loadData();
+    await loadData();
+    await loadMyAcc();
   }
 
   static insert(Account user) async {
@@ -40,11 +44,21 @@ class MongoDatabase{
     return accounts[0]; 
   }
 
-  static updateInfo(String username,String field,String result) async {
-    collection.updateOne(where.eq('username', username), modify.set(field, result));
+  static updateInfo(String username,Person info) async {
+    await collection.updateOne(where.eq('username', username), modify.set('info', info.toJson()));
   }
 
-  // static delete(Account user) async {
-  //   await userCollection.remove(where.id(user.id));
-  // }
+  static delete(String username) async {
+    await collection.remove(where.eq('username',username));
+  }
+
+  static loadMyAcc() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String username = prefs.getString(MyAccount.username)??'';
+    if(username!=''){
+      var cursor = await collection.find(where.eq('username', username));
+      var documents = await cursor.toList();
+      myAcc=Account.fromJson(documents[0]);
+    }
+  }  
 }

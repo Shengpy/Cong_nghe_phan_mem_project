@@ -27,10 +27,10 @@ class Person{
   String education='';
   String sexualOrentation='';
   String describe='';
-  // @HiveType(typeId: 1)
-  // late List<Person> favoritePersons;
   String image='assets/images/Unknown_person.jpg';
-  
+  List<String> likedMe=[];
+  List<String> myFavorites=[];
+
   Person({this.name='',this.age=0,this.email=''});
   factory Person.fromJson(Map<String, dynamic> json) => _$PersonFromJson(json);
   Map<String, dynamic> toJson() => _$PersonToJson(this);

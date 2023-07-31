@@ -1,4 +1,5 @@
 
+import 'package:like_button/like_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../class/database.dart';
@@ -41,12 +42,12 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   // ignore: unused_field
   int _index = 0;
-  late Account acc;
   late List<Widget> cards;
   List<Account> accounts=MongoDatabase.accounts;
   List<Account> filteredaccounts=[];
   Account a=Account();
   Account b=Account();
+  Account acc=MongoDatabase.myAcc;
   late SharedPreferences prefs;
   @override
   void initState() {
@@ -63,17 +64,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
     super.initState();
     generateCards(accounts);
     filteredaccounts=accounts;
-    getMyAcc();
   }
-  void getMyAcc()async{
-    prefs = await SharedPreferences.getInstance();
-    String? username = prefs.getString(MyAccount.username);
-    for (var i = 0; i < accounts.length; i++){
-      if(username==accounts[i].username){
-        acc=accounts[i];
-      }
-   }
-  }
+
   void filter(FilterElement value) {
     filteredaccounts=[];
     if (value.gentle=='Men' || value.gentle=='Woman'){
@@ -155,7 +147,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
               borderRadius: BorderRadius.circular(30)),
           //--------------------------------search
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: TextField(
               decoration: const InputDecoration(
                   fillColor: Colors.white,
@@ -285,8 +277,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                           },
                           backgroundColor: Colors.white,
                           heroTag: 'like',
-                          child: const Icon(Icons.favorite,
-                              color: style.appColor, size: 30),
+                          child: const LikeButton(
+                          ),
                         ),
                       ],
                     ),

@@ -11,10 +11,10 @@ class Likes extends StatefulWidget {
   const Likes({Key? key}) : super(key: key);
 
   @override
-  _LikesState createState() => _LikesState();
+  LikesState createState() => LikesState();
 }
 
-class _LikesState extends State<Likes> {
+class LikesState extends State<Likes> {
   int tabID = 1;
   List<String> users = [
     'assets/images/5.jpg',
@@ -89,9 +89,9 @@ class _LikesState extends State<Likes> {
                           Expanded(
                               child: Container(
                             padding: const EdgeInsets.only(left: 16),
-                            child: Column(
+                            child: const Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const <Widget>[
+                              children: <Widget>[
                                 Text('John Doe',
                                     style: TextStyle(
                                         fontFamily: "semi-bold", fontSize: 16)),
@@ -104,9 +104,9 @@ class _LikesState extends State<Likes> {
                               ],
                             ),
                           )),
-                          Column(
+                          const Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
-                            children: const <Widget>[
+                            children: <Widget>[
                               Padding(
                                 padding: EdgeInsets.only(top: 5),
                                 child: Text('1d',
