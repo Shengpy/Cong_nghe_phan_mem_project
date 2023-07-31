@@ -5,5 +5,5 @@ class FilterElementValue{
   static const distanceMax='100';
   static const distanceMin='0';
   static const ageMax='50';
-  static const ageMin='20';
+  static const ageMin='0';
 }

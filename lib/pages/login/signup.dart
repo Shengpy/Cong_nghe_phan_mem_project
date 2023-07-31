@@ -10,7 +10,7 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
-  static const String id = 'signup';
+  // static const String id = 'signup';
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   final FocusNode _focusNodeEmail = FocusNode();
@@ -187,8 +187,7 @@ class _SignupState extends State<Signup> {
                     ),
                     onPressed: () {
                       if (_formKey.currentState?.validate() ?? false) {
-                        MongoDatabase.insert(Account(username:_controllerUsername.text,password:_controllerConFirmPassword.text));
-                        MongoDatabase.loadData();
+                        MongoDatabase.insert(Account(username:_controllerUsername.text,password:_controllerConFirmPassword.text,email:_controllerEmail.text));
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(

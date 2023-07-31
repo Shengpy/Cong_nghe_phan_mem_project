@@ -20,6 +20,7 @@ Map<String, dynamic> _$AccountToJson(Account instance) => <String, dynamic>{
 Person _$PersonFromJson(Map<String, dynamic> json) => Person(
       name: json['name'] as String? ?? '',
       age: json['age'] as int? ?? 0,
+      email: json['email'] as String? ?? '',
     )
       ..gentle = json['gentle'] as String
       ..address = json['address'] as String
@@ -33,6 +34,7 @@ Map<String, dynamic> _$PersonToJson(Person instance) => <String, dynamic>{
       'name': instance.name,
       'age': instance.age,
       'gentle': instance.gentle,
+      'email': instance.email,
       'address': instance.address,
       'phoneNumber': instance.phoneNumber,
       'education': instance.education,

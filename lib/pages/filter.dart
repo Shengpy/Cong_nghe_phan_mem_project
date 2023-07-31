@@ -20,7 +20,7 @@ class FilterState extends State<Filter> {
   bool isShare = false;
   String dropdownValue = FilterElementValue.gentle;
   RangeValues distance=const RangeValues(0, 50);
-  RangeValues age=const RangeValues(20, 50);
+  RangeValues age=const RangeValues(0, 50);
   @override
   void initState() {
     initDefaultValue();
@@ -30,7 +30,7 @@ class FilterState extends State<Filter> {
   initDefaultValue() async{
     prefs = await SharedPreferences.getInstance();
     String gentle = prefs.getString(FilterElementValue.gentle)??'Other';
-    double minAge = prefs.getDouble(FilterElementValue.ageMin)??20;
+    double minAge = prefs.getDouble(FilterElementValue.ageMin)??0;
     double maxAge = prefs.getDouble(FilterElementValue.ageMax)??50;
     double mindistance = prefs.getDouble(FilterElementValue.distanceMin)??0;
     double maxdistance = prefs.getDouble(FilterElementValue.distanceMax)??50;

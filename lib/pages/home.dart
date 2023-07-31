@@ -61,8 +61,8 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
     b.info.setName('Vinh');
     accounts.add(b);
     super.initState();
-    // filter(FilterElement());
     generateCards(accounts);
+    filteredaccounts=accounts;
     getMyAcc();
   }
   void getMyAcc()async{

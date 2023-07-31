@@ -17,13 +17,13 @@ class MongoDatabase{
     await db.open();
     inspect(db);
     collection = db.collection(COLLECTION_NAME);
-    
-  loadData();
+    collection.find().forEach((user)=>print(user));
+    loadData();
   }
-
 
   static insert(Account user) async {
     await collection.insertMany([user.toJson()]);
+    loadData();
   }
 
   static loadData() async {
@@ -32,4 +32,19 @@ class MongoDatabase{
     accounts.add(Account.fromJson(user))
     );
   }
+
+  static Account searchData(String a){
+    accounts=[];
+    collection.find().forEach((user)=>accounts.add(Account.fromJson(user)));
+    // print(Type(collection.find(where.eq("username", a)).toList()))
+    return accounts[0]; 
+  }
+
+  static updateInfo(String username,String field,String result) async {
+    collection.updateOne(where.eq('username', username), modify.set(field, result));
+  }
+
+  // static delete(Account user) async {
+  //   await userCollection.remove(where.id(user.id));
+  // }
 }

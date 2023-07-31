@@ -7,9 +7,11 @@ part 'Account.g.dart';
 class Account{
   late String username;
   late String password;
-  Person info=Person();
+  late Person info;
   
-  Account({this.username='',this.password=''});
+  Account({this.username='',this.password='',email=''}){
+    info=Person(email:email);
+  }
   factory Account.fromJson(Map<String, dynamic> json) => _$AccountFromJson(json);
   Map<String, dynamic> toJson() => _$AccountToJson(this);
 }
@@ -19,6 +21,7 @@ class Person{
   String name='';
   int age;
   String gentle='';
+  String email='';
   String address='';
   String phoneNumber='';
   String education='';
@@ -28,7 +31,7 @@ class Person{
   // late List<Person> favoritePersons;
   String image='assets/images/Unknown_person.jpg';
   
-  Person({this.name='',this.age=0});
+  Person({this.name='',this.age=0,this.email=''});
   factory Person.fromJson(Map<String, dynamic> json) => _$PersonFromJson(json);
   Map<String, dynamic> toJson() => _$PersonToJson(this);
   void updateImage(String a){image=a;}

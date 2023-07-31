@@ -6,5 +6,5 @@ class FilterElement{
   int distanceMin;
   int ageMax;
   int ageMin;
-  FilterElement({this.gentle='Other',this.distanceMin=0,this.distanceMax=50,this.ageMin=20,this.ageMax=50});
+  FilterElement({this.gentle='Other',this.distanceMin=0,this.distanceMax=50,this.ageMin=0,this.ageMax=50});
 }

@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../class/Account.dart';
 import '../../class/database.dart';
 import '../tabs.dart';
+import 'forgotpassword.dart';
 import 'signup.dart';
 
 class Login extends StatefulWidget {
@@ -30,6 +31,7 @@ class _LoginState extends State<Login> {
   bool _obscurePassword = true;
 
   bool checkUser(String a,String b,String c){
+    accounts=MongoDatabase.accounts;
     for (var i = 0; i < accounts.length; i++){
       if(accounts[i].username==a){
         if(c=="username")
@@ -85,6 +87,7 @@ class _LoginState extends State<Login> {
                 validator: (String? value) {
                   if (value == null || value.isEmpty) {
                     return "Please enter username.";
+                  // } else if (MongoDatabase.searchData(_controllerUsername.text).username==value) {                  
                   } else if (!checkUser(value,'','username')) {
                     return "Username is not registered.";
                   }
@@ -157,7 +160,7 @@ class _LoginState extends State<Login> {
                     },
                     child: const Text("Login"),
                   ),
-                  //----------------------------------------------
+                  //----------------------------------------------Sign up
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -177,8 +180,24 @@ class _LoginState extends State<Login> {
                         },
                         child: const Text("Signup"),
                       ),
+                      //---------------------------------Forgot password
+                      TextButton(
+                        onPressed: () {
+                          _formKey.currentState?.reset();
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return const ForgotPassword();
+                              },
+                            ),
+                          );
+                        },
+                        child: const Text("Forgot Password"),
+                      ),
                     ],
-                  ),
+                  ),                  
                 ],
               ),
             ],
