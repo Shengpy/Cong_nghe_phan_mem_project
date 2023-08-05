@@ -1,4 +1,7 @@
 
+import 'package:flutter_application_1/class/database.dart';
+
+import '../class/Account.dart';
 import '/pages/friend_profile.dart';
 import 'package:flutter/material.dart';
 import '../components/styles.dart' as style;
@@ -16,28 +19,21 @@ class Likes extends StatefulWidget {
 
 class LikesState extends State<Likes> {
   int tabID = 1;
-  List<String> users = [
-    'assets/images/5.jpg',
-    'assets/images/1.jpg',
-    'assets/images/2.jpg',
-    'assets/images/3.jpg',
-    'assets/images/4.jpg',
-    'assets/images/5.jpg',
-    'assets/images/1.jpg',
-    'assets/images/3.jpg',
-    'assets/images/1.jpg',
-    'assets/images/1.jpg',
-    'assets/images/2.jpg',
-    'assets/images/3.jpg',
-    'assets/images/4.jpg',
-    'assets/images/5.jpg',
-    'assets/images/1.jpg',
-    'assets/images/3.jpg',
-  ];
+  List<Account> favoritesUsers = [];
 
   @override
   void initState() {
     super.initState();
+    getFavoriteUsers();
+  }
+
+  void getFavoriteUsers(){
+    List<Account> accounts=MongoDatabase.accounts;
+    for (var i = 0; i < accounts.length; i++){
+      if(MongoDatabase.myAcc.info.myFavorites.contains(accounts[i].username)){
+        favoritesUsers.add(accounts[i]);
+      }
+    }
   }
 
   @override
@@ -63,7 +59,7 @@ class LikesState extends State<Likes> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Column(
-            children: List.generate(users.length, (index) {
+            children: List.generate(favoritesUsers.length, (index) {
               return Container(
                 padding:
                     const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -75,7 +71,7 @@ class LikesState extends State<Likes> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const FriendProfile()));
+                                builder: (context) => FriendProfile(personInfo: favoritesUsers[index])));
                       },
                       child: Row(
                         children: <Widget>[
@@ -83,21 +79,21 @@ class LikesState extends State<Likes> {
                             radius: 25,
                             child: Padding(
                               padding: const EdgeInsets.all(0),
-                              child: ClipOval(child: Image.asset(users[index])),
+                              child: ClipOval(child: Image.asset(favoritesUsers[index].info.image)),
                             ),
                           ),
                           Expanded(
                               child: Container(
                             padding: const EdgeInsets.only(left: 16),
-                            child: const Column(
+                            child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Text('John Doe',
-                                    style: TextStyle(
+                                Text(favoritesUsers[index].info.name,
+                                    style: const TextStyle(
                                         fontFamily: "semi-bold", fontSize: 16)),
-                                Padding(
+                                const Padding(
                                   padding: EdgeInsets.only(top: 3),
-                                  child: Text('like your profile send message',
+                                  child: Text('Click to see more info',
                                       style: TextStyle(
                                           color: Colors.grey, fontSize: 12)),
                                 ),

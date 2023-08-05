@@ -18,7 +18,7 @@ class FilterState extends State<Filter> {
   late SharedPreferences prefs;
   bool isShow = false;
   bool isShare = false;
-  String dropdownValue = FilterElementValue.gentle;
+  String dropdownValue = FilterElementValue.gender;
   RangeValues distance=const RangeValues(0, 50);
   RangeValues age=const RangeValues(0, 50);
   @override
@@ -29,13 +29,13 @@ class FilterState extends State<Filter> {
   
   initDefaultValue() async{
     prefs = await SharedPreferences.getInstance();
-    String gentle = prefs.getString(FilterElementValue.gentle)??'Other';
+    String gender = prefs.getString(FilterElementValue.gender)??'Other';
     double minAge = prefs.getDouble(FilterElementValue.ageMin)??0;
     double maxAge = prefs.getDouble(FilterElementValue.ageMax)??50;
     double mindistance = prefs.getDouble(FilterElementValue.distanceMin)??0;
     double maxdistance = prefs.getDouble(FilterElementValue.distanceMax)??50;
     setState(() {
-      dropdownValue = gentle;
+      dropdownValue = gender;
       age=RangeValues(minAge, maxAge);
       distance=RangeValues(mindistance, maxdistance);
     });
@@ -48,7 +48,7 @@ class FilterState extends State<Filter> {
         leading: IconButton(
           onPressed: () async{
             SharedPreferences prefs = await SharedPreferences.getInstance();
-            await prefs.setString(FilterElementValue.gentle, dropdownValue);
+            await prefs.setString(FilterElementValue.gender, dropdownValue);
             await prefs.setDouble(FilterElementValue.distanceMin, distance.start);
             await prefs.setDouble(FilterElementValue.distanceMax, distance.end);
             await prefs.setDouble(FilterElementValue.ageMin, age.start);
@@ -56,7 +56,7 @@ class FilterState extends State<Filter> {
             
             // ignore: use_build_context_synchronously
             Navigator.pop(context,FilterElement(
-              gentle: dropdownValue,
+              gender: dropdownValue,
               distanceMin: distance.start.toInt(),
               distanceMax: distance.end.toInt(),
               ageMin: age.start.toInt(),

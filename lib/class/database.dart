@@ -15,6 +15,7 @@ class MongoDatabase{
   static dynamic collection;
   static Account myAcc=Account();
   static List<Account> accounts=[];
+  static List<Account> chattingPersons=[];
   
   static connect() async{
     db= await Db.create(MONGO_URL);
@@ -22,7 +23,6 @@ class MongoDatabase{
     inspect(db);
     collection = db.collection(COLLECTION_NAME);
     await loadData();
-    await loadMyAcc();
   }
 
   static insert(Account user) async {
@@ -35,6 +35,12 @@ class MongoDatabase{
     await collection.find().forEach((user)=>
     accounts.add(Account.fromJson(user))
     );
+    await loadMyAcc();
+    for (var i = 0; i < myAcc.info.chattingPersons.length; i++){
+      var cursor = await collection.find(where.eq('username', myAcc.info.chattingPersons[i]));
+      var documents = await cursor.toList();
+      chattingPersons.add(Account.fromJson(documents[0]));
+    }
   }
 
   static Account searchData(String a){
@@ -58,7 +64,12 @@ class MongoDatabase{
     if(username!=''){
       var cursor = await collection.find(where.eq('username', username));
       var documents = await cursor.toList();
+      try{
       myAcc=Account.fromJson(documents[0]);
+      }catch (e){
+       myAcc=Account();
+      }
     }
   }  
+
 }

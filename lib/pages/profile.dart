@@ -9,10 +9,10 @@ class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
 
   @override
-  _ProfileState createState() => _ProfileState();
+  ProfileState createState() => ProfileState();
 }
 
-class _ProfileState extends State<Profile> {
+class ProfileState extends State<Profile> {
   int segmentedControlValue = 0;
 
   @override
@@ -179,7 +179,7 @@ class _ProfileState extends State<Profile> {
                 ],
               ),
               const SizedBox(height: 25),
-              Container(
+              SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {

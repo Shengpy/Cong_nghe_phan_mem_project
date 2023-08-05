@@ -1,4 +1,6 @@
 
+import 'package:flutter_application_1/class/database.dart';
+
 import '/pages/EditProfile.dart';
 import '/pages/setting.dart';
 import 'package:flutter/material.dart';
@@ -10,10 +12,10 @@ class MyProfile extends StatefulWidget {
   const MyProfile({Key? key}) : super(key: key);
 
   @override
-  _MyProfileState createState() => _MyProfileState();
+  MyProfileState createState() => MyProfileState();
 }
 
-class _MyProfileState extends State<MyProfile> {
+class MyProfileState extends State<MyProfile> {
   List<String> images = [
     'assets/images/1.jpg',
     'assets/images/2.jpg',
@@ -51,31 +53,31 @@ class _MyProfileState extends State<MyProfile> {
         Container(
           width: double.infinity,
           height: 450,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage('assets/images/mobile.jpg'),
+                image: AssetImage(MongoDatabase.myAcc.info.image),
                 fit: BoxFit.cover),
           ),
         ),
-        Positioned(
-            child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.only(top: 30),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                  icon: const Icon(
-                    Icons.chevron_left,
-                    color: Colors.white,
-                    size: 40,
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  }),
-            ],
-          ),
-        )),
+        // Positioned(
+        //     child: Container(
+        //   width: double.infinity,
+        //   padding: const EdgeInsets.only(top: 30),
+        //   child: Row(
+        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //     children: [
+        //       IconButton(
+        //           icon: const Icon(
+        //             Icons.chevron_left,
+        //             color: Colors.white,
+        //             size: 40,
+        //           ),
+        //           onPressed: () {
+        //             Navigator.pop(context);
+        //           }),
+        //     ],
+        //   ),
+        // )),
         Positioned(
             bottom: 10,
             left: 16,
@@ -133,6 +135,7 @@ class _MyProfileState extends State<MyProfile> {
     );
   }
 
+  // ignore: non_constant_identifier_names
   Widget _ProfileDesc() {
     return Container(
       color: Colors.white,
@@ -146,15 +149,15 @@ class _MyProfileState extends State<MyProfile> {
               Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const <Widget>[
+                    children: <Widget>[
                       Text(
-                        'John Doe ',
-                        style: TextStyle(fontSize: 22, fontFamily: "bold"),
+                        MongoDatabase.myAcc.info.name,
+                        style: const TextStyle(fontSize: 22, fontFamily: "bold"),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top: 5),
-                        child: Text('Florida, USA',
-                            style: TextStyle(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: Text(MongoDatabase.myAcc.info.address,
+                            style: const TextStyle(
                                 fontSize: 16,
                                 color: Colors.grey,
                                 fontFamily: "medium")),
@@ -164,9 +167,9 @@ class _MyProfileState extends State<MyProfile> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                 decoration: buildIconButton(),
-                child: const Text('23 years',
+                child: Text(MongoDatabase.myAcc.info.age.toString(),
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontFamily: "semi-bold",
                       fontSize: 12,
@@ -176,31 +179,31 @@ class _MyProfileState extends State<MyProfile> {
           ),
           const SizedBox(height: 16),
           Row(
-            children: const [
-          Icon(Icons.school, color: Colors.grey),
+            children: [
+          const Icon(Icons.school, color: Colors.grey),
           Padding(
-            padding: EdgeInsets.only(left: 10),
+            padding: const EdgeInsets.only(left: 10),
             child: Text(
-              "Flutter Developer",
-              style: TextStyle(
+              MongoDatabase.myAcc.info.education,
+              style: const TextStyle(
                   fontSize: 16, color: Colors.grey, fontFamily: "medium"),
             ),
           )
             ],
           ),
-          Row(
-            children: const [
-          Icon(Icons.category_outlined, color: Colors.grey),
-          Padding(
-            padding: EdgeInsets.only(left: 10),
-            child: Text(
-              "Music, Traveling, Netflix",
-              style: TextStyle(
-                  fontSize: 16, color: Colors.grey, fontFamily: "medium"),
-            ),
-          )
-            ],
-          ),
+          // Row(
+          //   children: const [
+          // Icon(Icons.category_outlined, color: Colors.grey),
+          // Padding(
+          //   padding: EdgeInsets.only(left: 10),
+          //   child: Text(
+          //     "Music, Traveling, Netflix",
+          //     style: TextStyle(
+          //         fontSize: 16, color: Colors.grey, fontFamily: "medium"),
+          //   ),
+          // )
+          //   ],
+          // ),
           const SizedBox(height: 16),
           const InkWell(
             child: Text(
@@ -209,9 +212,9 @@ class _MyProfileState extends State<MyProfile> {
             ),
           ),
           const SizedBox(height: 5),
-          const Text(
-              'Hello everyone, this is john and this is details for testing. this is about dummy details. Vivera quies vivamu mi in turple. Sit Bandiya dofa cras semper phasellus sed ulthrieds. no where over the horiiszon. this is dummy text.',
-              style: TextStyle(
+          Text(
+              MongoDatabase.myAcc.info.describe,
+              style: const TextStyle(
                   fontSize: 14, color: Colors.grey, fontFamily: "medium")),
           Container(
             margin: const EdgeInsets.only(top: 20),
@@ -225,10 +228,10 @@ class _MyProfileState extends State<MyProfile> {
                 ),
                 InkWell(
                   child: Row(
-                    children: const [
+                    children:[
                       Text(
-                        'Female',
-                        style: TextStyle(
+                        MongoDatabase.myAcc.info.gender,
+                        style: const TextStyle(
                           color: style.appColor,
                         ),
                       ),
@@ -255,7 +258,7 @@ class _MyProfileState extends State<MyProfile> {
                   onChanged: (value) {
                     setState(() {
                       isShare = value;
-                      print(isShare);
+                      // print(isShare);
                     });
                   },
                 )

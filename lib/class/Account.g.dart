@@ -23,7 +23,7 @@ Person _$PersonFromJson(Map<String, dynamic> json) => Person(
       email: json['email'] as String? ?? '',
     )
       ..birthday = json['birthday'] as String
-      ..gentle = json['gentle'] as String
+      ..gender = json['gender'] as String
       ..address = json['address'] as String
       ..phoneNumber = json['phoneNumber'] as String
       ..education = json['education'] as String
@@ -34,13 +34,18 @@ Person _$PersonFromJson(Map<String, dynamic> json) => Person(
           (json['likedMe'] as List<dynamic>).map((e) => e as String).toList()
       ..myFavorites = (json['myFavorites'] as List<dynamic>)
           .map((e) => e as String)
+          .toList()
+      ..hobby =
+          (json['hobby'] as List<dynamic>).map((e) => e as String).toList()
+      ..chattingPersons = (json['chattingPersons'] as List<dynamic>)
+          .map((e) => e as String)
           .toList();
 
 Map<String, dynamic> _$PersonToJson(Person instance) => <String, dynamic>{
       'name': instance.name,
       'age': instance.age,
       'birthday': instance.birthday,
-      'gentle': instance.gentle,
+      'gender': instance.gender,
       'email': instance.email,
       'address': instance.address,
       'phoneNumber': instance.phoneNumber,
@@ -50,4 +55,6 @@ Map<String, dynamic> _$PersonToJson(Person instance) => <String, dynamic>{
       'image': instance.image,
       'likedMe': instance.likedMe,
       'myFavorites': instance.myFavorites,
+      'hobby': instance.hobby,
+      'chattingPersons': instance.chattingPersons,
     };

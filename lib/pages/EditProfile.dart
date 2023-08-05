@@ -1,5 +1,8 @@
+// ignore_for_file: file_names
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/class/database.dart';
+import 'package:flutter_application_1/components/button.dart';
 import '../components/styles.dart' as style;
 
 class EditProfile extends StatefulWidget {
@@ -8,16 +11,21 @@ class EditProfile extends StatefulWidget {
   const EditProfile({Key? key}) : super(key: key);
 
   @override
-  _EditProfileState createState() => _EditProfileState();
+  EditProfileState createState() => EditProfileState();
 }
 
-class _EditProfileState extends State<EditProfile> {
+class EditProfileState extends State<EditProfile> {
   bool isSmartPhotos = false;
   bool isShare = false;
+  final TextEditingController _controllerDescribe = TextEditingController();
+  final TextEditingController _controllerName = TextEditingController();
+  final TextEditingController _controllerBirth = TextEditingController();
+  final TextEditingController _controllerLocation = TextEditingController();
+  
   RangeValues distance = const RangeValues(40, 80);
   RangeValues age = const RangeValues(40, 80);
   int selectGender = 1;
-  String dropdownValue = 'Men';
+  String dropdownValue = MongoDatabase.myAcc.info.gender==''?'Other':MongoDatabase.myAcc.info.gender;
   @override
   void initState() {
     super.initState();
@@ -65,9 +73,9 @@ class _EditProfileState extends State<EditProfile> {
                   children: [
                     Stack(
                       children: [
-                        const CircleAvatar(
+                        CircleAvatar(
                           backgroundImage:
-                              AssetImage('assets/images/2.jpg'),
+                              AssetImage(MongoDatabase.myAcc.info.image),
                           radius: 70,
                         ),
                         Positioned(
@@ -86,10 +94,10 @@ class _EditProfileState extends State<EditProfile> {
                             )),
                       ],
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(top: 10),
-                      child: Text('John Doe',
-                          style: TextStyle(
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Text(MongoDatabase.myAcc.info.name,
+                          style: const TextStyle(
                               fontWeight: FontWeight.w600, fontSize: 20)),
                     ),
                   ],
@@ -97,6 +105,7 @@ class _EditProfileState extends State<EditProfile> {
               ),
               _buildBoldFont('About You'),
               TextField(
+                // controller: Des,
                 maxLines: 4,
                 decoration: inputFieldDecoration('Bio'),
               ),
@@ -147,6 +156,7 @@ class _EditProfileState extends State<EditProfile> {
                   ],
                 ),
               ),
+              //------------------------------My dinstance
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 color: Colors.white,
@@ -167,13 +177,28 @@ class _EditProfileState extends State<EditProfile> {
                   ],
                 ),
               ),
+              //----------------------------------
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 27),
+                color: Colors.white,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children:[
+                    Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 0,horizontal: 45),
+                    child: RoundedButton(label: 'Update',onPressed: hehe,
+                    )
+                    )
+                  ],
+                ),
+              ),
             ],
           ),
         ],
       ),
     );
   }
-
+  void hehe(){}
   Widget _buildSelect() {
     return DropdownButton<String>(
       value: dropdownValue,
@@ -199,16 +224,6 @@ class _EditProfileState extends State<EditProfile> {
     return const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(5)));
-  }
-
-  Widget _buildGreyLabel(text) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Text(
-        '$text',
-        style: const TextStyle(color: Colors.grey, fontSize: 16),
-      ),
-    );
   }
 
   Widget _buildBoldFont(text) {

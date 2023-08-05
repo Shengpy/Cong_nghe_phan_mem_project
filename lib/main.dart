@@ -7,7 +7,6 @@ import '/pages/friend_profile.dart';
 import '/pages/myprofile.dart';
 import '/pages/verification.dart';
 import 'package:flutter/material.dart';
-import '/pages/welcome.dart';
 import '/pages/home.dart';
 import '/pages/tabs.dart';
 import '/pages/profile.dart';
@@ -17,7 +16,7 @@ import '/pages/notification.dart';
 import '/pages/Filter.dart';
 import '/pages/Setting.dart';
 import '/pages/editProfile.dart';
-import '/pages/chat.dart';
+// import '/pages/chat.dart';
 
 void main() async{
   // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -48,10 +47,10 @@ class DateApp extends StatelessWidget {
         ),
       ),
       initialRoute: username.isNotEmpty ?TabsExample.id:Login.id,
-      // initialRoute: TabsExample.id,
+      // initialRoute:  Verification.id,
+      // initialRoute:  FriendProfile.id,
       debugShowCheckedModeBanner: false,
       routes: {
-        Welcome.id: (context) => const Welcome(),
         Login.id: (context) => const Login(),
         Home.id: (context) => const Home(),
         TabsExample.id: (context) => const TabsExample(),
@@ -62,8 +61,8 @@ class DateApp extends StatelessWidget {
         Filter.id: (context) => const Filter(),
         Setting.id: (context) => const Setting(),
         EditProfile.id: (context) => const EditProfile(),
-        Chat.id: (context) => const Chat(),
-        FriendProfile.id: (context) => const FriendProfile(),
+        // Chat.id: (context) => const Chat(),
+        // FriendProfile.id: (context) => const FriendProfile(),
         Verification.id: (context) => const Verification(),
         MyProfile.id: (context) => const MyProfile(),
       },

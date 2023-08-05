@@ -21,7 +21,7 @@ class Person{
   String name='';
   int age;
   String birthday='';
-  String gentle='';
+  String gender='';
   String email='';
   String address='';
   String phoneNumber='';
@@ -31,12 +31,14 @@ class Person{
   String image='assets/images/Unknown_person.jpg';
   List<String> likedMe=[];
   List<String> myFavorites=[];
+  List<String> hobby=[];
+  List<String> chattingPersons=[];
 
   Person({this.name='',this.age=0,this.email=''});
   factory Person.fromJson(Map<String, dynamic> json) => _$PersonFromJson(json);
   Map<String, dynamic> toJson() => _$PersonToJson(this);
   void updateImage(String a){image=a;}
-  void updateGentle(String a){gentle=a;}
+  void updateGender(String a){gender=a;}
   void setName(String a){name=a;}
   bool setAge(int a){
     if(a<=0){

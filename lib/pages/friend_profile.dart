@@ -1,17 +1,20 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/class/Account.dart';
 import '../components/styles.dart' as style;
 
 class FriendProfile extends StatefulWidget {
   static const String id = 'FriendProfile';
 
-  const FriendProfile({Key? key}) : super(key: key);
+  final Account personInfo;
+
+  const FriendProfile({super.key,required this.personInfo});
 
   @override
-  _FriendProfileState createState() => _FriendProfileState();
+  FriendProfileState createState() => FriendProfileState();
 }
 
-class _FriendProfileState extends State<FriendProfile> {
+class FriendProfileState extends State<FriendProfile> {
   List<String> images = [
     'assets/images/1.jpg',
     'assets/images/2.jpg',
@@ -49,9 +52,9 @@ class _FriendProfileState extends State<FriendProfile> {
         Container(
           width: double.infinity,
           height: 600,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage('assets/images/mobile.jpg'),
+                image: AssetImage(widget.personInfo.info.image),
                 fit: BoxFit.cover),
           ),
         ),
@@ -98,15 +101,15 @@ class _FriendProfileState extends State<FriendProfile> {
               Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const <Widget>[
+                    children: <Widget>[
                       Text(
-                        'John Doe ',
-                        style: TextStyle(fontSize: 22, fontFamily: "bold"),
+                        widget.personInfo.info.name,
+                        style: const TextStyle(fontSize: 22, fontFamily: "bold"),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top: 5),
-                        child: Text('Florida, USA',
-                            style: TextStyle(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: Text(widget.personInfo.info.address,
+                            style: const TextStyle(
                                 fontSize: 16,
                                 color: Colors.grey,
                                 fontFamily: "medium")),
@@ -119,9 +122,9 @@ class _FriendProfileState extends State<FriendProfile> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                     decoration: buildIconButton(),
-                    child: const Text('23 years',
+                    child: Text('${widget.personInfo.info.age} years',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontFamily: "semi-bold",
                           fontSize: 12,
@@ -138,31 +141,31 @@ class _FriendProfileState extends State<FriendProfile> {
           ),
           const SizedBox(height: 16),
           Row(
-            children: const [
-          Icon(Icons.school, color: Colors.grey),
+            children:[
+          const Icon(Icons.school, color: Colors.grey),
           Padding(
-            padding: EdgeInsets.only(left: 10),
+            padding: const EdgeInsets.only(left: 10),
             child: Text(
-              "Flutter Developer",
-              style: TextStyle(
+              widget.personInfo.info.education,
+              style: const TextStyle(
                   fontSize: 16, color: Colors.grey, fontFamily: "medium"),
             ),
           )
             ],
           ),
-          Row(
-            children: const [
-          Icon(Icons.category_outlined, color: Colors.grey),
-          Padding(
-            padding: EdgeInsets.only(left: 10),
-            child: Text(
-              "Music, Traveling, Netflix",
-              style: TextStyle(
-                  fontSize: 16, color: Colors.grey, fontFamily: "medium"),
-            ),
-          )
-            ],
-          ),
+          // Row(
+          //   children: [
+          // const Icon(Icons.category_outlined, color: Colors.grey),
+          // Padding(
+          //   padding: EdgeInsets.only(left: 10),
+          //   child: Text(
+          //     widget.personInfo.info.ho,
+          //     style: const TextStyle(
+          //         fontSize: 16, color: Colors.grey, fontFamily: "medium"),
+          //   ),
+          // )
+          //   ],
+          // ),
           const SizedBox(height: 16),
           const InkWell(
             child: Text(
@@ -171,9 +174,9 @@ class _FriendProfileState extends State<FriendProfile> {
             ),
           ),
           const SizedBox(height: 5),
-          const Text(
-              'Hello everyone, this is john and this is details for testing. this is about dummy details. Vivera quies vivamu mi in turple. Sit Bandiya dofa cras semper phasellus sed ulthrieds. no where over the horiiszon. this is dummy text.',
-              style: TextStyle(
+         Text(
+              widget.personInfo.info.describe,
+              style: const TextStyle(
                   fontSize: 14, color: Colors.grey, fontFamily: "medium")),
           Container(
             margin: const EdgeInsets.only(top: 20),
@@ -187,10 +190,10 @@ class _FriendProfileState extends State<FriendProfile> {
                 ),
                 InkWell(
                   child: Row(
-                    children: const [
+                    children: [
                       Text(
-                        'Female',
-                        style: TextStyle(
+                        widget.personInfo.info.gender,
+                        style: const TextStyle(
                           color: style.appColor,
                         ),
                       ),

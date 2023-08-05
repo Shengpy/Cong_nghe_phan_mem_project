@@ -20,7 +20,7 @@ underlineInputBorder() {
       borderSide: BorderSide(width: 1, color: Colors.black12));
 }
 
-BorderedButton() {
+borderedButton() {
   return ElevatedButton.styleFrom(
       foregroundColor: style.appColor, backgroundColor: Colors.transparent,
       padding: const EdgeInsets.symmetric(vertical: 15),
@@ -30,7 +30,7 @@ BorderedButton() {
       elevation: 0);
 }
 
-FillButton() {
+fillButton() {
   return ElevatedButton.styleFrom(
       foregroundColor: Colors.white, backgroundColor: style.appColor,
       padding: const EdgeInsets.symmetric(vertical: 15),
@@ -40,7 +40,7 @@ FillButton() {
       elevation: 0);
 }
 
-FacebookButton() {
+facebookButton() {
   return ElevatedButton.styleFrom(
       foregroundColor: Colors.white, backgroundColor: (const Color(0xFF395697)),
       padding: const EdgeInsets.symmetric(vertical: 15),

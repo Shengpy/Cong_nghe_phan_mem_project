@@ -52,12 +52,12 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     a.info.updateImage("assets/images/user1.jpg");
-    a.info.updateGentle("Woman");
+    a.info.updateGender("Woman");
     a.info.setAge(27);
     a.info.setName('Tai');
     accounts.add(a);
     b.info.updateImage("assets/images/user2.jpg");
-    b.info.updateGentle("Men");
+    b.info.updateGender("Men");
     b.info.setAge(47);
     b.info.setName('Vinh');
     accounts.add(b);
@@ -68,9 +68,9 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   void filter(FilterElement value) {
     filteredaccounts=[];
-    if (value.gentle=='Men' || value.gentle=='Woman'){
+    if (value.gender=='Men' || value.gender=='Woman'){
       for (var i = 0; i < accounts.length; i++){
-        if(accounts[i].info.gentle==value.gentle && accounts[i].info.age<=value.ageMax && accounts[i].info.age>= value.ageMin){
+        if(accounts[i].info.gender==value.gender && accounts[i].info.age<=value.ageMax && accounts[i].info.age>= value.ageMin){
           filteredaccounts.add(accounts[i]);
         }
       }
@@ -179,6 +179,20 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
               ),
             ),
           ),
+        //----------------------------reload
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: IconButton(
+                  onPressed: () async{
+                    await MongoDatabase.loadData();
+                    await MongoDatabase.loadMyAcc();
+                  },
+                  icon: const Icon(
+                    Icons.replay_circle_filled_outlined,
+                    size:30
+                  ),
+                ),
+          ),  
           //-----------------------------------log out
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -197,7 +211,10 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       ),
                     );
                   },
-                  icon: const Icon(Icons.logout_rounded),
+                  icon: const Icon(
+                    Icons.logout_rounded,
+                    size:30,
+                  ),
                 ),
           ),
         ],
@@ -205,31 +222,109 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
       body: Center(
         child: Column(
           children: <Widget>[
-            TCard(
-              cards: cards,
-              controller: _controller,
-              onForward: (index, info) {
-                _index = index;
-                setState(() {});
-                if (info.direction == SwipDirection.Right) {
-                  // acc.addPersons();
-                  // ignore: avoid_print
-                  print('like');
-                }
-                // print('forward');
-              },
-              onBack: (index, info) {
-                _index = index;
-                setState(() {});
-                // print('back');
-              },
-              onEnd: () {
-                // print('end');
-              },
+            SizedBox(
+              child: Column(
+                children: [
+                  //------------------------------------------------------T card
+                  TCard(
+                    cards: cards,
+                    controller: _controller,
+                    onForward: (index, info) async{
+                      String favorite=MongoDatabase.accounts[_index].username;
+                      //--------------like
+                      if (info.direction == SwipDirection.Right) {
+                        if(!MongoDatabase.myAcc.info.myFavorites.contains(favorite)){
+                          MongoDatabase.myAcc.info.myFavorites.add(favorite);
+                        }
+                      }
+                      //-------------don't like
+                      else{
+                        if(MongoDatabase.myAcc.info.myFavorites.contains(favorite)){
+                          MongoDatabase.myAcc.info.myFavorites.remove(favorite);
+                        }                  
+                      }
+                      await MongoDatabase.updateInfo(MongoDatabase.myAcc.username, MongoDatabase.myAcc.info);
+                      // print('forward');
+                      setState(() {_index = index;});
+                    },
+                    onBack: (index, info) {
+                      
+                      _index = index;
+                      setState(() {});
+                      // print('back');
+                    },
+                    onEnd: () {
+                      // print('end');
+                    },
+                  ),
+                  //--------------------------------------------------------info
+                  _index!=MongoDatabase.accounts.length?
+                  Container(
+                    height: 60,
+                    width:350,
+                    margin:const EdgeInsets.symmetric(vertical:0),
+                    decoration: const BoxDecoration(
+                      color:Color.fromARGB(255, 255, 255, 255),
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                      boxShadow: [
+                       BoxShadow(
+                         color:Colors.black38,
+                         offset:Offset(2,3), 
+                         blurRadius: 3,
+                       )
+                      ]
+                    ),
+                    padding: const EdgeInsets.only(top:5,left:16),
+                    alignment: Alignment.topLeft,
+                    child: Column(
+                    children: [
+                      Container(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          'Name: ${MongoDatabase.accounts[_index].info.name}',
+                          style: const TextStyle(
+                            color: Color.fromARGB(255, 0, 0, 0),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                          )),
+                      Container(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          'Age: ${MongoDatabase.accounts[_index].info.age}',textAlign: TextAlign.left,
+                          style: const TextStyle(
+                            color: Color.fromARGB(255, 0, 0, 0),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),                        
+                          ),),
+                    ],
+                  ))
+                  :
+                  Container(
+                    height: 50,
+                    width:350,
+                    margin:const EdgeInsets.symmetric(vertical:0),
+                    // padding: const EdgeInsets.symmetric(vertical:5,horizontal: 5),
+                    decoration: const BoxDecoration(
+                      color:Color.fromARGB(255, 255, 255, 255),
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                      boxShadow: [
+                       BoxShadow(
+                         color:Colors.black38,
+                         offset:Offset(2,3), 
+                         blurRadius: 3,
+                       )
+                      ]
+                    ),
+                  ),
+                ],
+              ),
             ),
+            //-----------------------------------------------------------
             const SizedBox(height: 20),
                 Container(
-                    margin: const EdgeInsets.symmetric(vertical: 48.0),
+                    margin: const EdgeInsets.symmetric(vertical:0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -262,7 +357,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const Chat()));
+                                    builder: (context) => Chat(chattingPerson:MongoDatabase.accounts[_index])));
                           },
                           heroTag: 'message',
                           backgroundColor: Colors.white,
@@ -273,29 +368,24 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                         //-----------------------------love button
                         FloatingActionButton(
                           onPressed: () {
-                            _controller.forward(direction:SwipDirection.Right);
+                            // _controller.forward(direction:SwipDirection.Right);
                           },
                           backgroundColor: Colors.white,
                           heroTag: 'like',
-                          child: const LikeButton(
+                          child: LikeButton(
+                            onTap:(bool isLiked)async{
+                            _controller.forward(direction:SwipDirection.Right);                   
+                            return !MongoDatabase.myAcc.info.myFavorites.contains(MongoDatabase.accounts[_index].username);
+                            },
+                            isLiked: _index!=MongoDatabase.accounts.length?
+                            MongoDatabase.myAcc.info.myFavorites.contains(MongoDatabase.accounts[_index].username)
+                            :false,
                           ),
                         ),
                       ],
                     ),
                   )
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBody() {
-    return SingleChildScrollView(
-      // ignore: avoid_unnecessary_containers
-      child: Container(
-        child: const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [],
         ),
       ),
     );

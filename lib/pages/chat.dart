@@ -1,17 +1,20 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/class/database.dart';
+import '../class/Account.dart';
 import '../components/styles.dart' as style;
 
 class Chat extends StatefulWidget {
   static const String id = 'Chat';
+  final Account chattingPerson;
 
-  const Chat({Key? key}) : super(key: key);
+  const Chat({super.key,required this.chattingPerson});
 
   @override
-  _ChatState createState() => _ChatState();
+  ChatState createState() => ChatState();
 }
 
-class _ChatState extends State<Chat> {
+class ChatState extends State<Chat> {
   List<Item> messages = <Item>[
     const Item('left', 'Hello'),
     const Item('right', 'Hii'),
@@ -53,17 +56,17 @@ class _ChatState extends State<Chat> {
         ),
         centerTitle: true,
         title: Row(
-          children: const <Widget>[
+          children: <Widget>[
             CircleAvatar(
-              backgroundImage: AssetImage('assets/images/2.jpg'),
+              backgroundImage: AssetImage(widget.chattingPerson.info.image),
               radius: 20,
             ),
             Padding(
-              padding: EdgeInsets.only(left: 10),
+              padding: const EdgeInsets.only(left: 10),
               child: Text(
-                'John Doe',
+                widget.chattingPerson.info.name,
                 style:
-                    TextStyle(color: Colors.black87, fontFamily: "semi-bold"),
+                    const TextStyle(color: Colors.black87, fontFamily: "semi-bold"),
               ),
             ),
           ],
@@ -81,15 +84,16 @@ class _ChatState extends State<Chat> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: messages.map((Item msg) {
             return msg.side == 'left'
-                ? Container(
+                ?//----------------------------------My friend 
+                Container(
                     margin: const EdgeInsets.only(bottom: 16),
                     width: MediaQuery.of(context).size.width - 120,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        const CircleAvatar(
-                          backgroundImage: AssetImage('assets/images/3.jpg'),
+                        CircleAvatar(
+                          backgroundImage: AssetImage(widget.chattingPerson.info.image),
                           radius: 20,
                         ),
                         Flexible(
@@ -110,7 +114,8 @@ class _ChatState extends State<Chat> {
                       ],
                     ),
                   )
-                : Row(
+                ://-----------------------------------Me 
+                Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       Container(
@@ -137,9 +142,9 @@ class _ChatState extends State<Chat> {
                                 ),
                               ),
                             ),
-                            const CircleAvatar(
+                            CircleAvatar(
                               backgroundImage:
-                                  AssetImage('assets/images/4.jpg'),
+                                  AssetImage(MongoDatabase.myAcc.info.image),
                               radius: 20,
                             ),
                           ],

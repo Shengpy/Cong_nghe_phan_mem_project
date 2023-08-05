@@ -1,4 +1,5 @@
 
+import '../class/Account.dart';
 import '/pages/chat.dart';
 import 'package:flutter/material.dart';
 import '../components/styles.dart' as style;
@@ -9,10 +10,10 @@ class Inbox extends StatefulWidget {
   const Inbox({Key? key}) : super(key: key);
 
   @override
-  _InboxState createState() => _InboxState();
+  InboxState createState() => InboxState();
 }
 
-class _InboxState extends State<Inbox> {
+class InboxState extends State<Inbox> {
   @override
   void initState() {
     super.initState();
@@ -87,7 +88,7 @@ class _InboxState extends State<Inbox> {
       child: InkWell(
         onTap: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => const Chat()));
+              context, MaterialPageRoute(builder: (context) => Chat(chattingPerson: Account(email:'abc'))));
         },
         child: Row(
           children: <Widget>[
@@ -98,9 +99,9 @@ class _InboxState extends State<Inbox> {
             Expanded(
                 child: Container(
               padding: const EdgeInsets.only(left: 10),
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const <Widget>[
+                children: <Widget>[
                   Text('John Doe', style: TextStyle(fontFamily: "semi-bold")),
                   Padding(
                     padding: EdgeInsets.only(top: 5),
