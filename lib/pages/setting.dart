@@ -8,10 +8,10 @@ class Setting extends StatefulWidget {
   const Setting({Key? key}) : super(key: key);
 
   @override
-  _SettingState createState() => _SettingState();
+  SettingState createState() => SettingState();
 }
 
-class _SettingState extends State<Setting> {
+class SettingState extends State<Setting> {
   bool isShow = false;
   bool isShare = false;
   @override
@@ -175,7 +175,7 @@ class _SettingState extends State<Setting> {
                     onChanged: (value) {
                       setState(() {
                         isShare = value;
-                        print(isShare);
+                        // print(isShare);
                       });
                     },
                   )
@@ -206,7 +206,7 @@ class _SettingState extends State<Setting> {
                     onChanged: (value) {
                       setState(() {
                         isShare = value;
-                        print(isShare);
+                        // print(isShare);
                       });
                     },
                   )

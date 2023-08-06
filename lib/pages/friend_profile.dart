@@ -146,7 +146,7 @@ class FriendProfileState extends State<FriendProfile> {
           Padding(
             padding: const EdgeInsets.only(left: 10),
             child: Text(
-              widget.personInfo.info.education,
+              widget.personInfo.info.job,
               style: const TextStyle(
                   fontSize: 16, color: Colors.grey, fontFamily: "medium"),
             ),

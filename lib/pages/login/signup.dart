@@ -46,13 +46,13 @@ class _SignupState extends State<Signup> {
           child: Column(
             children: [
               const SizedBox(height: 100),
-              Text(
+              const Text(
                 "Register",
                 style: TextStyle(
                     fontFamily: "bold", color: style.appColor, fontSize: 50),
               ),
               const SizedBox(height: 10),
-              Text(
+              const Text(
                 "Create your account",
                 style: TextStyle(
                     fontSize: 16, fontFamily: "medium", color: Colors.black54),
@@ -184,8 +184,8 @@ class _SignupState extends State<Signup> {
                   //------------------------------Register button
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      primary: style.appColor,
-                      onPrimary: Colors.white,
+                      backgroundColor: style.appColor,
+                      // onPrimary: Colors.white,
                       minimumSize: const Size.fromHeight(30), //50
                       padding: const EdgeInsets.symmetric(vertical: 15),
                       shape: RoundedRectangleBorder(

@@ -21,11 +21,11 @@ class Person{
   String name='';
   int age;
   String birthday='';
-  String gender='';
+  String gender='Other';
   String email='';
   String address='';
   String phoneNumber='';
-  String education='';
+  String job='';
   String sexualOrentation='';
   String describe='';
   String image='assets/images/Unknown_person.jpg';

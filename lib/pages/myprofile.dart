@@ -184,7 +184,7 @@ class MyProfileState extends State<MyProfile> {
           Padding(
             padding: const EdgeInsets.only(left: 10),
             child: Text(
-              MongoDatabase.myAcc.info.education,
+              MongoDatabase.myAcc.info.job,
               style: const TextStyle(
                   fontSize: 16, color: Colors.grey, fontFamily: "medium"),
             ),

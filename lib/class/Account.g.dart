@@ -26,7 +26,7 @@ Person _$PersonFromJson(Map<String, dynamic> json) => Person(
       ..gender = json['gender'] as String
       ..address = json['address'] as String
       ..phoneNumber = json['phoneNumber'] as String
-      ..education = json['education'] as String
+      ..job = json['job'] as String
       ..sexualOrentation = json['sexualOrentation'] as String
       ..describe = json['describe'] as String
       ..image = json['image'] as String
@@ -49,7 +49,7 @@ Map<String, dynamic> _$PersonToJson(Person instance) => <String, dynamic>{
       'email': instance.email,
       'address': instance.address,
       'phoneNumber': instance.phoneNumber,
-      'education': instance.education,
+      'job': instance.job,
       'sexualOrentation': instance.sexualOrentation,
       'describe': instance.describe,
       'image': instance.image,
