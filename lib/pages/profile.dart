@@ -58,11 +58,9 @@ class ProfileState extends State<Profile> {
             children: [
               Stack(
                 children: [
-                  Container(
-                    child: const CircleAvatar(
-                      backgroundImage: AssetImage('assets/images/2.jpg'),
-                      radius: 70,
-                    ),
+                  const CircleAvatar(
+                    backgroundImage: AssetImage('assets/images/2.jpg'),
+                    radius: 70,
                   ),
                   Positioned(
                       bottom: 5,

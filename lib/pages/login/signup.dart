@@ -1,6 +1,7 @@
 import '../../class/database.dart';
 import '/class/Account.dart';
 import 'package:flutter/material.dart';
+import '/components/styles.dart' as style;
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -19,12 +20,13 @@ class _SignupState extends State<Signup> {
   final TextEditingController _controllerUsername = TextEditingController();
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
-  final TextEditingController _controllerConFirmPassword = TextEditingController();
-  List<Account> accounts=MongoDatabase.accounts;
+  final TextEditingController _controllerConFirmPassword =
+      TextEditingController();
+  List<Account> accounts = MongoDatabase.accounts;
 
-  bool checkUsername(String a){
-    for (var i = 0; i < accounts.length; i++){
-      if(accounts[i].username==a){
+  bool checkUsername(String a) {
+    for (var i = 0; i < accounts.length; i++) {
+      if (accounts[i].username == a) {
         return true;
       }
     }
@@ -36,7 +38,7 @@ class _SignupState extends State<Signup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      backgroundColor: Colors.white,
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -46,12 +48,14 @@ class _SignupState extends State<Signup> {
               const SizedBox(height: 100),
               Text(
                 "Register",
-                style: Theme.of(context).textTheme.headlineLarge,
+                style: TextStyle(
+                    fontFamily: "bold", color: style.appColor, fontSize: 50),
               ),
               const SizedBox(height: 10),
               Text(
                 "Create your account",
-                style: Theme.of(context).textTheme.bodyMedium,
+                style: TextStyle(
+                    fontSize: 16, fontFamily: "medium", color: Colors.black54),
               ),
               const SizedBox(height: 35),
               TextFormField(
@@ -180,14 +184,20 @@ class _SignupState extends State<Signup> {
                   //------------------------------Register button
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(50),
+                      primary: style.appColor,
+                      onPrimary: Colors.white,
+                      minimumSize: const Size.fromHeight(30), //50
+                      padding: const EdgeInsets.symmetric(vertical: 15),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(50),
                       ),
                     ),
                     onPressed: () {
                       if (_formKey.currentState?.validate() ?? false) {
-                        MongoDatabase.insert(Account(username:_controllerUsername.text,password:_controllerConFirmPassword.text,email:_controllerEmail.text));
+                        MongoDatabase.insert(Account(
+                            username: _controllerUsername.text,
+                            password: _controllerConFirmPassword.text,
+                            email: _controllerEmail.text));
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -216,7 +226,13 @@ class _SignupState extends State<Signup> {
                       const Text("Already have an account?"),
                       TextButton(
                         onPressed: () => Navigator.pop(context),
-                        child: const Text("Login"),
+                        child: const Text(
+                          "Login",
+                          style: TextStyle(
+                              fontFamily: "bold",
+                              color: style.appColor,
+                              fontSize: 15),
+                        ),
                       ),
                     ],
                   ),

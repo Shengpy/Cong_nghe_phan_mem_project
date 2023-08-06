@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'resetpassword.dart';
+import '/components/styles.dart' as style;
+
+import 'verification.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({super.key});
@@ -23,7 +25,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      backgroundColor: Colors.white,
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -31,14 +33,16 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           child: Column(
             children: [
               const SizedBox(height: 150),
-              Text(
+              const Text(
                 "Forgot Password",
-                style: Theme.of(context).textTheme.headlineLarge,
+                style: TextStyle(
+                    fontFamily: "bold", color: style.appColor, fontSize: 50),
               ),
               const SizedBox(height: 10),
-              Text(
+              const Text(
                 "Please provide the email address that you used when you signed up for your account",
-                style: Theme.of(context).textTheme.bodyMedium,
+                style: TextStyle(
+                    fontSize: 16, fontFamily: "medium", color: Colors.black54),
               ),
               const SizedBox(height: 60),
               TextFormField(
@@ -70,32 +74,36 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 children: [
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(50),
+                      backgroundColor: style.appColor,
+                      // onPrimary: Colors.white,
+                      minimumSize: const Size.fromHeight(30), //50
+                      padding: const EdgeInsets.symmetric(vertical: 15),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(50),
                       ),
                     ),
                     onPressed: () {
+
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) {
-                            return const ResetPassword();
+                            return const Verification();
                           },
                         ),
                       );
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          width: 200,
-                          backgroundColor:
-                              Theme.of(context).colorScheme.secondary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          behavior: SnackBarBehavior.floating,
-                          content: const Text("Email Confirmed"),
-                        ),
-                      );
+                      // ScaffoldMessenger.of(context).showSnackBar(
+                      //   SnackBar(
+                      //     width: 200,
+                      //     backgroundColor:
+                      //         Theme.of(context).colorScheme.secondary,
+                      //     shape: RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.circular(10),
+                      //     ),
+                      //     behavior: SnackBarBehavior.floating,
+                      //     content: const Text("Email Confirmed"),
+                      //   ),
+                      // );
                     },
                     child: const Text("Confirm"),
                   ),
@@ -105,7 +113,11 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       const Text("Already have an account?"),
                       TextButton(
                         onPressed: () => Navigator.pop(context),
-                        child: const Text("Login"),
+                        child: const Text("Login",
+                        style: TextStyle(
+                              fontFamily: "bold",
+                              color: style.appColor,
+                              fontSize: 15),),
                       ),
                     ],
                   ),

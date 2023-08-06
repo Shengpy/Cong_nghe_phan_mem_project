@@ -105,20 +105,23 @@ class EditProfileState extends State<EditProfile> {
               ),
               _buildBoldFont('About You'),
               TextField(
-                // controller: Des,
+                controller: _controllerDescribe,
                 maxLines: 4,
                 decoration: inputFieldDecoration('Bio'),
               ),
               _buildBoldFont('Name'),
               TextField(
+                controller: _controllerName,
                 decoration: inputFieldDecoration('Enter Name'),
               ),
               _buildBoldFont('Date of birth'),
               TextField(
+                controller: _controllerBirth,
                 decoration: inputFieldDecoration('Enter Date of birth'),
               ),
               _buildBoldFont('Location'),
               TextField(
+                controller: _controllerLocation,
                 decoration: inputFieldDecoration('Enter CIty'),
               ),
               _buildBoldFont('Gender'),

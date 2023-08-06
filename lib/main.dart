@@ -3,9 +3,8 @@ import 'package:flutter_application_1/values/loginstatus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '/pages/login/login.dart';
-import '/pages/friend_profile.dart';
 import '/pages/myprofile.dart';
-import '/pages/verification.dart';
+import 'pages/login/verification.dart';
 import 'package:flutter/material.dart';
 import '/pages/home.dart';
 import '/pages/tabs.dart';

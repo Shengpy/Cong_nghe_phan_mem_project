@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/components/styles.dart' as style;
 
 import 'login.dart';
 
@@ -18,14 +19,15 @@ class _ResetPasswordState extends State<ResetPassword> {
   final TextEditingController _controllerUsername = TextEditingController();
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
-  final TextEditingController _controllerConFirmPassword = TextEditingController();
+  final TextEditingController _controllerConFirmPassword =
+      TextEditingController();
 
   bool _obscurePassword = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      backgroundColor: Colors.white,
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -33,14 +35,16 @@ class _ResetPasswordState extends State<ResetPassword> {
           child: Column(
             children: [
               const SizedBox(height: 150),
-              Text(
+              const Text(
                 "Reset Password",
-                style: Theme.of(context).textTheme.headlineLarge,
+                style: TextStyle(
+                    fontFamily: "bold", color: style.appColor, fontSize: 50),
               ),
               const SizedBox(height: 10),
-              Text(
+              const Text(
                 "Enter new Password",
-                style: Theme.of(context).textTheme.bodyMedium,
+                style: TextStyle(
+                    fontSize: 16, fontFamily: "medium", color: Colors.black54),
               ),
               const SizedBox(height: 35),
               TextFormField(
@@ -117,9 +121,12 @@ class _ResetPasswordState extends State<ResetPassword> {
                 children: [
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(50),
+                      backgroundColor: style.appColor,
+                      // onPrimary: Colors.white,
+                      minimumSize: const Size.fromHeight(30), //50
+                      padding: const EdgeInsets.symmetric(vertical: 15),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(50),
                       ),
                     ),
                     onPressed: () {
@@ -158,8 +165,21 @@ class _ResetPasswordState extends State<ResetPassword> {
                     children: [
                       const Text("Already have an account?"),
                       TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text("Login"),
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return const Login();
+                            },
+                          ),
+                        ),
+                        child: const Text(
+                          "Login",
+                          style: TextStyle(
+                              fontFamily: "bold",
+                              color: style.appColor,
+                              fontSize: 15),
+                        ),
                       ),
                     ],
                   ),
