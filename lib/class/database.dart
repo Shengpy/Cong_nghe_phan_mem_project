@@ -23,6 +23,7 @@ class MongoDatabase{
     inspect(db);
     collection = db.collection(COLLECTION_NAME);
     await loadData();
+    await loadMyAcc();
   }
 
   static insert(Account user) async {
