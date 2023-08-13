@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/class/database.dart';
 import 'package:intl/intl.dart';
+import '../class/Account.dart';
 import '../components/styles.dart' as style;
 
 class Notification{
@@ -25,12 +27,24 @@ class NotificationsState extends State<Notifications>
   @override
   void initState() {
     super.initState();
+    getNotification();
   }
   final List<Notification> _elements = [
-    Notification(content:'Khang want to add friend',date:formattedDate),
-    Notification(content:'You are stupid',date:formattedDate),
-    Notification(content:'You are hacked by Sheng',date:formattedDate),
+    // Notification(content:'Khang want to add friend',date:formattedDate),
+    // Notification(content:'You are stupid',date:formattedDate),
+    // Notification(content:'You are hacked by Sheng',date:formattedDate),
   ];
+  void getNotification(){
+    List<Account> listAcc=[];
+    for (var i = 0; i < MongoDatabase.accounts.length; i++){
+      if(MongoDatabase.myAcc.info.likedMe.contains(MongoDatabase.accounts[i].username)){
+        listAcc.add(MongoDatabase.accounts[i]);
+      }
+    }
+    for (var i = 0; i < listAcc.length; i++){
+      _elements.add(Notification(content:'${listAcc[i].info.name} Like you',date:formattedDate));
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

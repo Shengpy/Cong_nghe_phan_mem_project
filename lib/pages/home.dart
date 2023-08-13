@@ -47,26 +47,25 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
   List<Account> filteredaccounts=[];
   Account a=Account();
   Account b=Account();
-  Account acc=MongoDatabase.myAcc;
   late SharedPreferences prefs;
   @override
   void initState() {
-    a.info.updateImage("assets/images/user1.jpg");
-    a.info.updateGender("Woman");
-    a.info.setAge(27);
-    a.info.setName('Tai');
-    accounts.add(a);
-    b.info.updateImage("assets/images/user2.jpg");
-    b.info.updateGender("Men");
-    b.info.setAge(47);
-    b.info.setName('Vinh');
-    accounts.add(b);
+    // a.info.updateImage("assets/images/user1.jpg");
+    // a.info.updateGender("Woman");
+    // a.info.setAge(27);
+    // a.info.setName('Tai');
+    // accounts.add(a);
+    // b.info.updateImage("assets/images/user2.jpg");
+    // b.info.updateGender("Men");
+    // b.info.setAge(47);
+    // b.info.setName('Vinh');
+    // accounts.add(b);
     super.initState();
     generateCards(accounts);
     filteredaccounts=accounts;
   }
 
-  void filter(FilterElement value) {
+  Future<void> filter(FilterElement value) async{
     filteredaccounts=[];
     if (value.gender=='Men' || value.gender=='Woman'){
       for (var i = 0; i < accounts.length; i++){
@@ -82,6 +81,24 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
         }
       }
     }
+    List<Account> temp=[];
+    prefs = await SharedPreferences.getInstance();
+    Account acc=MongoDatabase.myAcc;
+    bool isMatch = prefs.getBool('isMatch')??false;
+    if(isMatch){
+      for (var i = 0; i < filteredaccounts.length; i++){
+        bool check=true;
+        for(var j=0;j<acc.info.hobby.length;j++){
+          if(!filteredaccounts[i].info.hobby.contains(acc.info.hobby[j])){
+            check=false;
+          }
+        }
+        if(check){
+          temp.add(filteredaccounts[i]);
+        }
+      }
+      filteredaccounts=temp;
+    }
     setState(() {
       generateCards(filteredaccounts);
       _controller.reset(cards:cards);
@@ -94,10 +111,13 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
         searchaccounts.add(listAcc[i]);
       }
     }
+
     setState(() {
-      generateCards(searchaccounts);
+      filteredaccounts=searchaccounts;
+      generateCards(filteredaccounts);
       _controller.reset(cards:cards);
-    });
+    }
+    );
   }
   void generateCards(List<Account> genAcc){
     if (genAcc.isEmpty){
@@ -147,7 +167,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
               borderRadius: BorderRadius.circular(30)),
           //--------------------------------search
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 0),
             child: TextField(
               decoration: const InputDecoration(
                   fillColor: Colors.white,
@@ -156,7 +176,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   border: InputBorder.none),
               onChanged: (value) {
                   setState(() { 
-                    search(filteredaccounts,value);
+                    search(accounts,value);
                   });
               },
             ),
@@ -166,12 +186,12 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
         //----------------------------filter
         actions: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 0),
             child: IconButton(
               onPressed: () async{
                 FilterElement receivedData = await Navigator.push(context,
                     MaterialPageRoute(builder: (_) => const Filter()));
-                filter(receivedData);
+                await filter(receivedData);
               },
               icon: const Icon(
                 Icons.filter_alt_outlined,
@@ -181,7 +201,7 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
           ),
         //----------------------------reload
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 0),
             child: IconButton(
                   onPressed: () async{
                     await MongoDatabase.loadData();
@@ -195,12 +215,14 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
           ),  
           //-----------------------------------log out
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 0),
             child: IconButton(
                   onPressed: () async{
                     prefs = await SharedPreferences.getInstance();
-                    prefs.setString(MyAccount.username, "");
-                    
+                    await prefs.setString(MyAccount.username, "");
+                    await MongoDatabase.loadMyAcc();                    
+                    await MongoDatabase.loadData();
+
                     if (!mounted) return;
                     Navigator.pushReplacement(
                       context,
@@ -220,172 +242,197 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
         ],
       ),
       body: Center(
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              child: Column(
-                children: [
-                  //------------------------------------------------------T card
-                  TCard(
-                    cards: cards,
-                    controller: _controller,
-                    onForward: (index, info) async{
-                      String favorite=MongoDatabase.accounts[_index].username;
-                      //--------------like
-                      if (info.direction == SwipDirection.Right) {
-                        if(!MongoDatabase.myAcc.info.myFavorites.contains(favorite)){
-                          MongoDatabase.myAcc.info.myFavorites.add(favorite);
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                child: Column(
+                  children: [
+                    //------------------------------------------------------T card
+                    TCard(
+                      cards: cards,
+                      controller: _controller,
+                      onForward: (index, info) async{
+                        String favorite=MongoDatabase.accounts[_index].username;
+                        Account favoritePerson= await MongoDatabase.searchData(favorite);
+                        //--------------like
+                        if (info.direction == SwipDirection.Right) {
+                          if(!MongoDatabase.myAcc.info.myFavorites.contains(favorite)){
+                            MongoDatabase.myAcc.info.myFavorites.add(favorite);
+                            if(!favoritePerson.info.likedMe.contains(MongoDatabase.myAcc.username)){
+                              favoritePerson.info.likedMe.add(MongoDatabase.myAcc.username);
+                            }
+                          }
                         }
-                      }
-                      //-------------don't like
-                      else{
-                        if(MongoDatabase.myAcc.info.myFavorites.contains(favorite)){
-                          MongoDatabase.myAcc.info.myFavorites.remove(favorite);
-                        }                  
-                      }
-                      await MongoDatabase.updateInfo(MongoDatabase.myAcc.username, MongoDatabase.myAcc.info);
-                      // print('forward');
-                      setState(() {_index = index;});
-                    },
-                    onBack: (index, info) {
-                      
-                      _index = index;
-                      setState(() {});
-                      // print('back');
-                    },
-                    onEnd: () {
-                      // print('end');
-                    },
-                  ),
-                  //--------------------------------------------------------info
-                  _index!=MongoDatabase.accounts.length?
-                  Container(
-                    height: 60,
-                    width:350,
-                    margin:const EdgeInsets.symmetric(vertical:0),
-                    decoration: const BoxDecoration(
-                      color:Color.fromARGB(255, 255, 255, 255),
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
-                      boxShadow: [
-                       BoxShadow(
-                         color:Colors.black38,
-                         offset:Offset(2,3), 
-                         blurRadius: 3,
-                       )
-                      ]
+                        //-------------don't like
+                        else{
+                          if(MongoDatabase.myAcc.info.myFavorites.contains(favorite)){
+                            MongoDatabase.myAcc.info.myFavorites.remove(favorite);
+                            if(favoritePerson.info.likedMe.contains(MongoDatabase.myAcc.username)){
+                              favoritePerson.info.likedMe.remove(MongoDatabase.myAcc.username);
+                            }
+                          }                  
+                        }
+                        await MongoDatabase.updateInfo(MongoDatabase.myAcc.username, MongoDatabase.myAcc.info);
+                        await MongoDatabase.updateInfo(favoritePerson.username, favoritePerson.info);
+                        // print('forward');
+                        setState(() {_index = index;});
+                      },
+                      onBack: (index, info) {
+                        
+                        _index = index;
+                        setState(() {});
+                        // print('back');
+                      },
+                      onEnd: () {
+                        // print('end');
+                      },
                     ),
-                    padding: const EdgeInsets.only(top:5,left:16),
-                    alignment: Alignment.topLeft,
-                    child: Column(
-                    children: [
-                      Container(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          'Name: ${MongoDatabase.accounts[_index].info.name}',
-                          style: const TextStyle(
-                            color: Color.fromARGB(255, 0, 0, 0),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
+                    //--------------------------------------------------------info
+                    _index!=filteredaccounts.length?
+                    Container(
+                      height: 95,
+                      width:350,
+                      margin:const EdgeInsets.symmetric(vertical:0),
+                      decoration: const BoxDecoration(
+                        color:Color.fromARGB(255, 255, 255, 255),
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                        boxShadow: [
+                         BoxShadow(
+                           color:Colors.black38,
+                           offset:Offset(2,3), 
+                           blurRadius: 3,
+                         )
+                        ]
+                      ),
+                      padding: const EdgeInsets.only(top:10,left:16,bottom:0),
+                      alignment: Alignment.topLeft,
+                      child: Column(
+                      children: [
+                        //-------------------------------name age
+                        Container(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            '${filteredaccounts[_index].info.name}  ${filteredaccounts[_index].info.age}',
+                            style: const TextStyle(
+                              color: Color.fromARGB(255, 0, 0, 0),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                            )
                           ),
-                          )),
-                      Container(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          'Age: ${MongoDatabase.accounts[_index].info.age}',textAlign: TextAlign.left,
-                          style: const TextStyle(
-                            color: Color.fromARGB(255, 0, 0, 0),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                          ),                        
-                          ),),
-                    ],
-                  ))
-                  :
-                  Container(
-                    height: 50,
-                    width:350,
-                    margin:const EdgeInsets.symmetric(vertical:0),
-                    // padding: const EdgeInsets.symmetric(vertical:5,horizontal: 5),
-                    decoration: const BoxDecoration(
-                      color:Color.fromARGB(255, 255, 255, 255),
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
-                      boxShadow: [
-                       BoxShadow(
-                         color:Colors.black38,
-                         offset:Offset(2,3), 
-                         blurRadius: 3,
-                       )
-                      ]
+                        //----------------------------hobby
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      alignment: Alignment.topLeft,
+                      color: Colors.white, 
+                      child: Wrap(
+                        spacing: 20, 
+                        runSpacing: 10,
+                        
+                        children: filteredaccounts[_index].info.hobby.map((hobby) {
+                          return ElevatedButton(
+                            onPressed: () {
+                              },
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                              Colors.pinkAccent,
+                              ),
+                            ),
+                            child: Text(hobby),      
+                          );
+                        }).toList(),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            //-----------------------------------------------------------
-            const SizedBox(height: 20),
-                Container(
-                    margin: const EdgeInsets.symmetric(vertical:0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        //----------------------------back button
-                        FloatingActionButton(
-                          onPressed: () {
-                            _controller.back();
-                          },
-                          heroTag: 'back',
-                          backgroundColor: Colors.white,
-                          child: const Icon(Icons.arrow_back_ios_new,
-                              color: style.appColor, size: 30),
-                        ),
-                        const Padding(padding: EdgeInsets.only(right: 40.0)),
-                        //------------------------------cancel button
-                        FloatingActionButton(
-                          onPressed: () {
-                            _controller.forward(direction:SwipDirection.Left);
-                          },
-                          heroTag: 'cancel',
-                          backgroundColor: Colors.white,
-                          child: const Icon(Icons.close,
-                              color: style.appColor, size: 30),
-                        ),
-                        const Padding(padding: EdgeInsets.only(right: 40.0)),
-                        //------------------------------message button
-                        FloatingActionButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Chat(chattingPerson:MongoDatabase.accounts[_index])));
-                          },
-                          heroTag: 'message',
-                          backgroundColor: Colors.white,
-                          child: const Icon(Icons.message_outlined,
-                              color: style.appColor, size: 30),
-                        ),
-                        const Padding(padding: EdgeInsets.only(right: 40.0)),
-                        //-----------------------------love button
-                        FloatingActionButton(
-                          onPressed: () {
-                            // _controller.forward(direction:SwipDirection.Right);
-                          },
-                          backgroundColor: Colors.white,
-                          heroTag: 'like',
-                          child: LikeButton(
-                            onTap:(bool isLiked)async{
-                            _controller.forward(direction:SwipDirection.Right);                   
-                            return !MongoDatabase.myAcc.info.myFavorites.contains(MongoDatabase.accounts[_index].username);
-                            },
-                            isLiked: _index!=MongoDatabase.accounts.length?
-                            MongoDatabase.myAcc.info.myFavorites.contains(MongoDatabase.accounts[_index].username)
-                            :false,
-                          ),
-                        ),
                       ],
+                    ))
+                    :
+                    Container(
+                      height: 50,
+                      width:350,
+                      margin:const EdgeInsets.symmetric(vertical:0),
+                      // padding: const EdgeInsets.symmetric(vertical:5,horizontal: 5),
+                      decoration: const BoxDecoration(
+                        color:Color.fromARGB(255, 255, 255, 255),
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                        boxShadow: [
+                         BoxShadow(
+                           color:Colors.black38,
+                           offset:Offset(2,3), 
+                           blurRadius: 3,
+                         )
+                        ]
+                      ),
                     ),
-                  )
-          ],
+                  ],
+                ),
+              ),
+              //-----------------------------------------------------------
+              const SizedBox(height: 20),
+                  Container(
+                      margin: const EdgeInsets.symmetric(vertical:0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          //----------------------------back button
+                          FloatingActionButton(
+                            onPressed: () {
+                              _controller.back();
+                            },
+                            heroTag: 'back',
+                            backgroundColor: Colors.white,
+                            child: const Icon(Icons.arrow_back_ios_new,
+                                color: style.appColor, size: 30),
+                          ),
+                          const Padding(padding: EdgeInsets.only(right: 40.0)),
+                          //------------------------------cancel button
+                          FloatingActionButton(
+                            onPressed: () {
+                              _controller.forward(direction:SwipDirection.Left);
+                            },
+                            heroTag: 'cancel',
+                            backgroundColor: Colors.white,
+                            child: const Icon(Icons.close,
+                                color: style.appColor, size: 30),
+                          ),
+                          const Padding(padding: EdgeInsets.only(right: 40.0)),
+                          //------------------------------message button
+                          FloatingActionButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Chat(chattingPerson:MongoDatabase.accounts[_index])));
+                            },
+                            heroTag: 'message',
+                            backgroundColor: Colors.white,
+                            child: const Icon(Icons.message_outlined,
+                                color: style.appColor, size: 30),
+                          ),
+                          const Padding(padding: EdgeInsets.only(right: 40.0)),
+                          //-----------------------------love button
+                          FloatingActionButton(
+                            onPressed: () {
+                              // _controller.forward(direction:SwipDirection.Right);
+                            },
+                            backgroundColor: Colors.white,
+                            heroTag: 'like',
+                            child: LikeButton(
+                              onTap:(bool isLiked)async{
+                              _controller.forward(direction:SwipDirection.Right);                   
+                              return !MongoDatabase.myAcc.info.myFavorites.contains(MongoDatabase.accounts[_index].username);
+                              },
+                              isLiked: _index!=MongoDatabase.accounts.length?
+                              MongoDatabase.myAcc.info.myFavorites.contains(MongoDatabase.accounts[_index].username)
+                              :false,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+            ],
+          ),
         ),
       ),
     );

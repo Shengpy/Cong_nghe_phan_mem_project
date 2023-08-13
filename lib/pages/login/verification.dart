@@ -6,7 +6,8 @@ import 'resetpassword.dart';
 class Verification extends StatefulWidget {
   static const String id = 'Verification';
 
-  const Verification({Key? key}) : super(key: key);
+  final String email;
+  const Verification({super.key,required this.email});
 
   @override
   VerificationState createState() => VerificationState();
@@ -55,16 +56,16 @@ class VerificationState extends State<Verification> {
                     const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                 child: RichText(
                   textAlign: TextAlign.center,
-                  text: const TextSpan(children: <TextSpan>[
-                    TextSpan(
+                  text: TextSpan(children: <TextSpan>[
+                    const TextSpan(
                         text: "Please enter 4-digit code sent to ",
                         style: TextStyle(
                             fontSize: 16,
                             fontFamily: "medium",
                             color: Colors.black54)),
                     TextSpan(
-                        text: "+91-9876543210",
-                        style: TextStyle(
+                        text: widget.email,
+                        style: const TextStyle(
                             fontSize: 16,
                             fontFamily: "medium",
                             color: style.appColor)),
@@ -97,7 +98,7 @@ class VerificationState extends State<Verification> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const ResetPassword()));
+                            builder: (context) => ResetPassword(email:widget.email)));
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: style.appColor,

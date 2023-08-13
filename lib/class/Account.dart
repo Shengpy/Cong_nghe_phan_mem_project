@@ -48,9 +48,18 @@ class Person{
     return true;
   }
   void setDescribe(String a){describe=a;}
-  // bool addPersons(Person a){
-  //   if(favoritePersons.contains(a)){return false;}
-  //   favoritePersons.add(a);
-  //   return true;
-  // }
+  void set(String name, int age, String birthday, String address,String gender, 
+            String phoneNumber,String job,  String sexualOrentation, String describe, String image,  List<String> hobby){
+    this.name = name;
+    this.age = age;
+    this.birthday = birthday;
+    this.address = address;
+    this.gender = gender;
+    this.phoneNumber = phoneNumber; 
+    this.job = job;
+    this.sexualOrentation = sexualOrentation;
+    this.describe = describe;
+    this.image = image;
+    this.hobby = hobby;
+  }
 }

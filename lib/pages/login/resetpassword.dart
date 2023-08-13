@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/class/database.dart';
+import '../../class/Account.dart';
 import '/components/styles.dart' as style;
 
 import 'login.dart';
 
 class ResetPassword extends StatefulWidget {
-  const ResetPassword({super.key});
+  final String email;
+  const ResetPassword({super.key,required this.email});
 
   @override
   State<ResetPassword> createState() => _ResetPasswordState();
@@ -129,24 +132,23 @@ class _ResetPasswordState extends State<ResetPassword> {
                         borderRadius: BorderRadius.circular(50),
                       ),
                     ),
-                    onPressed: () {
+                    onPressed: () async{
                       if (_formKey.currentState?.validate() ?? false) {
-                        // _boxAccounts.put(
-                        //   _controllerUsername.text,
-                        //   _controllerConFirmPassword.text,
-                        // );
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return const Login();
-                            },
-                          ),
-                        );
+                        Account a=Account();
+                        for (var i = 0; i < MongoDatabase.accounts.length; i++){
+                          if(MongoDatabase.accounts[i].info.email==widget.email){
+                            a=MongoDatabase.accounts[i];
+                            break;
+                          }
+                        }
+                        await MongoDatabase.updatePassword(a.username, _controllerPassword.text);
+                        await MongoDatabase.loadData();
+                        // ignore: use_build_context_synchronously
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             width: 200,
                             backgroundColor:
+                                // ignore: use_build_context_synchronously
                                 Theme.of(context).colorScheme.secondary,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
@@ -156,6 +158,8 @@ class _ResetPasswordState extends State<ResetPassword> {
                                 "Your password has been reset successfully"),
                           ),
                         );
+                        // ignore: use_build_context_synchronously
+                        Navigator.pop(context);
                       }
                     },
                     child: const Text("Confirm"),

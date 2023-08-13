@@ -1,10 +1,10 @@
 import 'package:flutter_application_1/class/database.dart';
-import 'package:flutter_application_1/values/loginstatus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:flutter_application_1/values/loginstatus.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
 import '/pages/login/login.dart';
 import '/pages/myprofile.dart';
-import 'pages/login/verification.dart';
+// import 'pages/login/verification.dart';
 import 'package:flutter/material.dart';
 import '/pages/home.dart';
 import '/pages/tabs.dart';
@@ -18,14 +18,15 @@ import '/pages/editProfile.dart';
 // import '/pages/chat.dart';
 
 void main() async{
+  WidgetsFlutterBinding.ensureInitialized;
   // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
   //   systemNavigationBarColor: Colors.transparent, // navigation bar color
   //   statusBarColor: Colors.black, // status bar color
   // ));
-  WidgetsFlutterBinding.ensureInitialized;
   await MongoDatabase.connect();
-  SharedPreferences prefs =await SharedPreferences.getInstance();
-  String username=prefs.getString(MyAccount.username)??'';
+  // SharedPreferences prefs =await SharedPreferences.getInstance();
+  // String username=prefs.getString(MyAccount.username)??'';
+  String username='';
   runApp(DateApp(username:username));
 }
 class DateApp extends StatelessWidget {
@@ -62,7 +63,7 @@ class DateApp extends StatelessWidget {
         EditProfile.id: (context) => const EditProfile(),
         // Chat.id: (context) => const Chat(),
         // FriendProfile.id: (context) => const FriendProfile(),
-        Verification.id: (context) => const Verification(),
+        // Verification.id: (context) => const Verification(),
         MyProfile.id: (context) => const MyProfile(),
       },
     );

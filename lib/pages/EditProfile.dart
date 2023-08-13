@@ -1,8 +1,9 @@
-// ignore_for_file: file_names
-
+// ignore_for_file: file_names, use_build_context_synchronously
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/class/database.dart';
 import '../components/styles.dart' as style;
+import 'package:flutter_application_1/class/Account.dart';
 
 class EditProfile extends StatefulWidget {
   static const String id = 'EditProfile';
@@ -16,31 +17,39 @@ class EditProfile extends StatefulWidget {
 class EditProfileState extends State<EditProfile> {
   bool isSmartPhotos = false;
   bool isShare = false;
-  final TextEditingController _controllerDescribe = TextEditingController();
-  final TextEditingController _controllerName = TextEditingController();
-  final TextEditingController _controllerBirth = TextEditingController();
-  final TextEditingController _controllerLocation = TextEditingController();
-  String image = '';
-  String name = '';
-  DateTime birthday = DateTime.now();
-  String address = '';
-  String phoneNumber = '';
-  String job = '';
-  String sexualOrentation = '';
-  String describe = '';
-  String gender = '';
-  String temp = 'Male';
-  String object = 'Male';
 
-  String option = (MongoDatabase.myAcc.info.birthday == '' ? 'Choose your date of birth' : MongoDatabase.myAcc.info.birthday);
-  RangeValues distance = const RangeValues(40, 80);
-  RangeValues age = const RangeValues(40, 80);
-  int selectGender = 1;
-  String dropdownValue = MongoDatabase.myAcc.info.gender==''?'Other':MongoDatabase.myAcc.info.gender;
+  String image = '';
+  String name = MongoDatabase.myAcc.info.name == '' ? '' : MongoDatabase.myAcc.info.name;
+  
+  late DateTime birthday;
+
   @override
   void initState() {
     super.initState();
+    if (MongoDatabase.myAcc.info.birthday != '') {
+      birthday = DateTime.parse(MongoDatabase.myAcc.info.birthday);
+    } else {
+      birthday = DateTime.now();
+    }
   }
+  
+  String address = MongoDatabase.myAcc.info.address== '' ? '' : MongoDatabase.myAcc.info.address;
+  String phoneNumber = MongoDatabase.myAcc.info.phoneNumber == '' ? '' : MongoDatabase.myAcc.info.phoneNumber;
+  String job = MongoDatabase.myAcc.info.job == '' ? '' : MongoDatabase.myAcc.info.job;
+  String sexualOrentation = MongoDatabase.myAcc.info.sexualOrentation== '' ? 'Other' : MongoDatabase.myAcc.info.sexualOrentation;
+  String describe = MongoDatabase.myAcc.info.describe == '' ? 'Set your description' : MongoDatabase.myAcc.info.describe;
+  String gender = MongoDatabase.myAcc.info.gender== '' ? 'Other' : MongoDatabase.myAcc.info.gender;
+
+  String temp = MongoDatabase.myAcc.info.gender== '' ? 'Other' : MongoDatabase.myAcc.info.gender;
+  String object = MongoDatabase.myAcc.info.sexualOrentation== '' ? 'Other' : MongoDatabase.myAcc.info.sexualOrentation;
+  int age = 0;
+
+  int selectGender = 1;
+  String dropdownValue = MongoDatabase.myAcc.info.gender==''?'Other':MongoDatabase.myAcc.info.gender;
+
+  List<String> hobbies = ['Reading', 'Swimming', 'Cooking', 'Traveling', 'Gaming', 'Coding', 'Football', 'Badminton', 'Sleeping', 'Eating',
+                            'Drinking', 'Basketball', 'Pet'];
+  List<String> selectHobbies = MongoDatabase.myAcc.info.hobby;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +58,7 @@ class EditProfileState extends State<EditProfile> {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pop(context,'');
           },
           icon: const Icon(
             Icons.chevron_left,
@@ -120,25 +129,30 @@ class EditProfileState extends State<EditProfile> {
                 decoration: inputFieldDecoration(MongoDatabase.myAcc.info.name == '' ? 'Enter full name' : MongoDatabase.myAcc.info.name),
                 onChanged: (value) {
                   setState(() {
-                    name = value;
+                      name = value;
                   });
                 },
               ),
               _buildBoldFont('Date of birth'),
+            
               ListTile(
                 tileColor: Colors.white,
+                title: const Text('Choose your birthday'),
+                subtitle: Text(DateFormat('yyyy-MM-dd').format(birthday)),
                 
-                title: Text(option),
-                subtitle: Text('${birthday.toLocal()}'.split(' ')[0]),
+                // subtitle: Text('${birthday.toLocal()}'.split(' ')[0]),
                 onTap: () async {
                   DateTime? pickedDate = await showDatePicker(
                     context: context,
                     initialDate: birthday,
+                    
                     firstDate: DateTime(1900),
                     lastDate: DateTime.now(),
+                    
                   );
-                  if (pickedDate != null && pickedDate != birthday) {
-                    setState(() {
+                  
+                  if (pickedDate != null && pickedDate != birthday) {          
+                    setState(() {                   
                       birthday = pickedDate;
                     });
                   }
@@ -146,7 +160,7 @@ class EditProfileState extends State<EditProfile> {
               ),
               _buildBoldFont('Location'),
               TextFormField(
-                decoration: inputFieldDecoration(MongoDatabase.myAcc.info.address == '' ? 'Enter your address' : MongoDatabase.myAcc.info.address),
+                decoration: inputFieldDecoration(MongoDatabase.myAcc.info.address== '' ? 'Enter your address' : MongoDatabase.myAcc.info.address),
                 onChanged: (value) {
                   setState(() {
                     address = value;
@@ -159,7 +173,7 @@ class EditProfileState extends State<EditProfile> {
                 value: temp,
                 onChanged: (value) {
                   setState(() {
-                    temp = value.toString();
+                    gender = value.toString();
                   });
                 },
                 items: ['Male', 'Female', 'Other']
@@ -168,7 +182,7 @@ class EditProfileState extends State<EditProfile> {
                           child: Text(gender),
                         ))
                     .toList(),
-                decoration: inputFieldDecoration(MongoDatabase.myAcc.info.gender),
+                decoration: inputFieldDecoration(gender),
               ),
               _buildBoldFont('Phone number'),
               TextFormField(
@@ -193,7 +207,7 @@ class EditProfileState extends State<EditProfile> {
                 value: object,
                 onChanged: (value) {
                   setState(() {
-                    object = value.toString();
+                    sexualOrentation = value.toString();
                   });
                 },
                 items: ['Male', 'Female', 'Other']
@@ -202,14 +216,56 @@ class EditProfileState extends State<EditProfile> {
                           child: Text(gender),
                         ))
                     .toList(),
-                decoration: inputFieldDecoration(MongoDatabase.myAcc.info.gender),
+                decoration: inputFieldDecoration(sexualOrentation),
               ),
               _buildBoldFont('About You'),
               TextField(
                 // controller: Des,
                 maxLines: 4,
                 decoration: inputFieldDecoration(MongoDatabase.myAcc.info.describe == '' ? 'Set your description' : MongoDatabase.myAcc.info.describe),
+                onChanged: (value) {
+                  setState(() {
+                    describe = value;
+                  });
+                },
               ),
+              _buildBoldFont('Hobbies'),
+              
+              Container(
+                padding: const EdgeInsets.symmetric(),
+                color: Colors.white, 
+                child: Wrap(
+                  spacing: 20, 
+                  runSpacing: 10,
+                  
+                  children: hobbies.map((hobby) {
+                    final isSelected = selectHobbies.contains(hobby);
+
+                    return Padding(
+                      
+                      padding: const EdgeInsets.only(top:10, bottom: 10, left: 10),
+                      child: ElevatedButton(
+                        onPressed: () {
+                            setState(() {          
+                              if (isSelected) {
+                                selectHobbies.remove(hobby);
+                              } else {
+                                selectHobbies.add(hobby);
+                              }
+                            });
+                          },
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                            isSelected ? Colors.pinkAccent : Colors.grey,
+                          ),
+                        ),
+                        child: Text(hobby),      
+                      )
+                    );
+                  }).toList(),
+                ),
+              ),
+              
               _buildBoldFont('Other'),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -268,23 +324,43 @@ class EditProfileState extends State<EditProfile> {
                           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20), 
                         ),
                         child: const Text('Update'),
-                        onPressed: (){
-                          // Person p = Person();
-                          // DateTime currentDate = DateTime.now();
-                          // int age = currentDate.year - birthday.year;
-                          // if (currentDate.month < birthday.month ||
-                          //                 (currentDate.month == birthday.month && currentDate.day < birthday.day)) {
-                          //   age--;
-                          // }
+                        onPressed: () async{
+                          Person p =MongoDatabase.myAcc.info;
+                          DateTime currentDate = DateTime.now();
+                          age = currentDate.year - birthday.year;
+                          if (currentDate.month < birthday.month ||
+                                          (currentDate.month == birthday.month && currentDate.day < birthday.day)) {
+                            age--;
+                          }
 
-                          // String day = birthday.day;
-                          // String month = birthday.month;
-                          // String year = birthday.year;
+                          int day = birthday.day;
+                          int month = birthday.month;
+                          int year = birthday.year;
+                          String monthStr = (month < 10) ? '0$month' : month.toString();
+                          String dayStr = (day < 10) ? '0$day' : day.toString();
 
-                          // birth_string = year + '-' + month + '-' + day;
-                          // p.set(name, age ,birth_string, address, gender, phoneNumber, job, sexualOrentation, describe, image);
-                          // MongoDatabase.updateInfo(MongoDatabase.myAcc.username, p);
-                        },
+                          String birthString = '$year-$monthStr-$dayStr';
+                          
+                          image = 'assets/images/Unknown_person.jpg';
+                          p.set(name, age ,birthString, address, gender, phoneNumber, job, sexualOrentation, describe, image, selectHobbies);
+                          await MongoDatabase.updateInfo(MongoDatabase.myAcc.username, p);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            duration: const Duration(seconds: 1),   
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20), 
+                            width: 200, 
+                            backgroundColor: Colors.pink,
+                                
+                            shape: RoundedRectangleBorder(  
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            behavior: SnackBarBehavior.floating,
+                            content: const Text("Updated Successfully", textAlign: TextAlign.center),
+                          ),
+                        );
+                        
+                        Navigator.pop(context,'refresh');                       
+                      }       
                       )
                     )
                   ],
@@ -296,27 +372,6 @@ class EditProfileState extends State<EditProfile> {
       ),
     );
   }
-  void hehe(){}
-  Widget _buildSelect() {
-    return DropdownButton<String>(
-      value: dropdownValue,
-      icon: const Icon(Icons.arrow_drop_down),
-      elevation: 16,
-      style: const TextStyle(color: Colors.black87),
-      onChanged: (String? newValue) {
-        setState(() {
-          dropdownValue = newValue!;
-        });
-      },
-      items: <String>['Men', 'Woman', 'Other']
-          .map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-    );
-  }
 
   myBoxDecoration() {
     return const BoxDecoration(
@@ -326,11 +381,12 @@ class EditProfileState extends State<EditProfile> {
 
   Widget _buildBoldFont(text) {
     return Padding(
+
       padding: const EdgeInsets.all(16),
       child: Text(
         '$text',
         style: const TextStyle(
-            color: Colors.grey, fontSize: 16, fontWeight: FontWeight.bold),
+            color: Colors.pink, fontSize: 16, fontWeight: FontWeight.bold),
       ),
     );
   }

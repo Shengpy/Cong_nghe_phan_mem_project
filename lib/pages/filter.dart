@@ -38,6 +38,7 @@ class FilterState extends State<Filter> {
       dropdownValue = gender;
       age=RangeValues(minAge, maxAge);
       distance=RangeValues(mindistance, maxdistance);
+      isShare=prefs.getBool('isMatch')??false;
     });
  }
   @override
@@ -201,10 +202,12 @@ class FilterState extends State<Filter> {
                   Switch(
                     activeColor: style.appColor,
                     value: isShare,
-                    onChanged: (value) {
+                    onChanged: (value) async{
                       setState(() {
                         isShare = value;
                       });
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      await prefs.setBool('isMatch', isShare);
                     },
                   )
                 ],

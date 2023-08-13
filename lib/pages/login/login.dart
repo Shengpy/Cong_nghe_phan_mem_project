@@ -57,7 +57,7 @@ class _LoginState extends State<Login> {
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(30.0),
+          padding: const EdgeInsets.all(15.0),
           child: Column(
             children: [
               const SizedBox(height: 150),
@@ -138,7 +138,7 @@ class _LoginState extends State<Login> {
                   return null;
                 },
               ),
-              const SizedBox(height: 60),
+              const SizedBox(height: 30),
               Column(
                 children: [
                   //------------------------------------Login button
@@ -146,7 +146,7 @@ class _LoginState extends State<Login> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: style.appColor,
                       // onPrimary: Colors.white,
-                      minimumSize: const Size.fromHeight(30), //50
+                      minimumSize: const Size.fromHeight(50), //50
                       padding: const EdgeInsets.symmetric(vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(50),
@@ -156,6 +156,8 @@ class _LoginState extends State<Login> {
                       if (_formKey.currentState?.validate() ?? false) {
                         SharedPreferences prefs = await SharedPreferences.getInstance();
                         await prefs.setString(MyAccount.username, _controllerUsername.text);
+                        await MongoDatabase.loadMyAcc();
+                        await MongoDatabase.loadData();
 
                         if (!mounted) return;
                         Navigator.pushReplacement(
@@ -169,54 +171,57 @@ class _LoginState extends State<Login> {
                         
                       }
                     },
-                    child: const Text("Login"),
+                    child: const Text("Login",style: TextStyle(fontSize: 20),),
                   ),
                   //----------------------------------------------Sign up
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text("Don't have an account?"),
-                      TextButton(
-                        onPressed: () {
-                          _formKey.currentState?.reset();
-
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return const Signup();
-                              },
-                            ),
-                          );
-                        },
-                        child: const Text("Signup",
-                        style: TextStyle(
-                              fontFamily: "bold",
-                              color: style.appColor,
-                              fontSize: 15),),
-                      ),
-                      //---------------------------------Forgot password
-                      TextButton(
-                        onPressed: () {
-                          _formKey.currentState?.reset();
-
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return const ForgotPassword();
-                              },
-                            ),
-                          );
-                        },
-                        child: const Text(
-                          "Forgot Password",
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text("Don't have an account?"),
+                        TextButton(
+                          onPressed: () {
+                            _formKey.currentState?.reset();
+                  
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return const Signup();
+                                },
+                              ),
+                            );
+                          },
+                          child: const Text("Signup",
                           style: TextStyle(
-                              fontFamily: "bold",
-                              color: style.appColor,
-                              fontSize: 15),),
-                      ),
-                    ],
+                                fontFamily: "bold",
+                                color: style.appColor,
+                                fontSize: 15),),
+                        ),
+                        //---------------------------------Forgot password
+                        TextButton(
+                          onPressed: () {
+                            _formKey.currentState?.reset();
+                  
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return const ForgotPassword();
+                                },
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            "Forgot Password",
+                            style: TextStyle(
+                                fontFamily: "bold",
+                                color: style.appColor,
+                                fontSize: 15),),
+                        ),
+                      ],
+                    ),
                   ),                  
                 ],
               ),

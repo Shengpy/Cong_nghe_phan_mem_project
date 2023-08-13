@@ -23,7 +23,6 @@ class MongoDatabase{
     inspect(db);
     collection = db.collection(COLLECTION_NAME);
     await loadData();
-    await loadMyAcc();
   }
 
   static insert(Account user) async {
@@ -36,23 +35,38 @@ class MongoDatabase{
     await collection.find().forEach((user)=>
     accounts.add(Account.fromJson(user))
     );
-    await loadMyAcc();
-    for (var i = 0; i < myAcc.info.chattingPersons.length; i++){
-      var cursor = await collection.find(where.eq('username', myAcc.info.chattingPersons[i]));
-      var documents = await cursor.toList();
-      chattingPersons.add(Account.fromJson(documents[0]));
-    }
+    // await loadMyAcc();
+    for (var i = 0; i < accounts.length; i++){
+      if (accounts[i].username==myAcc.username){
+        accounts.remove(accounts[i]);
+        break;
+      }
+    }    
+    // for (var i = 0; i < myAcc.info.chattingPersons.length; i++){
+    //   var cursor = await collection.find(where.eq('username', myAcc.info.chattingPersons[i]));
+    //   var documents = await cursor.toList();
+    //   chattingPersons.add(Account.fromJson(documents[0]));
+    // }
   }
 
-  static Account searchData(String a){
-    accounts=[];
-    collection.find().forEach((user)=>accounts.add(Account.fromJson(user)));
-    // print(Type(collection.find(where.eq("username", a)).toList()))
-    return accounts[0]; 
+  static Future<Account> searchData(String username) async{
+    Account acc;
+    var cursor = await collection.find(where.eq('username', username));
+    var documents = await cursor.toList();
+    try{
+    acc=Account.fromJson(documents[0]);
+    }catch (e){
+    acc=Account();
+    }
+    return acc;
   }
 
   static updateInfo(String username,Person info) async {
     await collection.updateOne(where.eq('username', username), modify.set('info', info.toJson()));
+  }
+
+  static updatePassword(String username, String pass)async{
+    await collection.updateOne(where.eq('username', username), modify.set('password', pass));
   }
 
   static delete(String username) async {
@@ -70,6 +84,9 @@ class MongoDatabase{
       }catch (e){
        myAcc=Account();
       }
+    }
+    else{
+      myAcc=Account();
     }
   }  
 

@@ -201,14 +201,16 @@ class _SignupState extends State<Signup> {
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            width: 200,
-                            backgroundColor:
-                                Theme.of(context).colorScheme.secondary,
-                            shape: RoundedRectangleBorder(
+                            duration: const Duration(seconds: 1),   
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20), 
+                            width: 200, 
+                            backgroundColor: Colors.pink,
+                                
+                            shape: RoundedRectangleBorder(  
                               borderRadius: BorderRadius.circular(10),
                             ),
                             behavior: SnackBarBehavior.floating,
-                            content: const Text("Registered Successfully"),
+                            content: const Text("Register Successfully", textAlign: TextAlign.center),
                           ),
                         );
 

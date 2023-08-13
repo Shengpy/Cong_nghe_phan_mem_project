@@ -88,7 +88,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         context,
                         MaterialPageRoute(
                           builder: (context) {
-                            return const Verification();
+                            return Verification(email: _controllerEmail.text);
                           },
                         ),
                       );
