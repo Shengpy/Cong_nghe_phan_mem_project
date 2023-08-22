@@ -3,11 +3,12 @@ import 'package:flutter_application_1/class/database.dart';
 import 'package:firebase_core/firebase_core.dart';
 import '/pages/login/login.dart';
 import '/pages/myprofile.dart';
+
 // import 'pages/login/verification.dart';
 import 'package:flutter/material.dart';
 import '/pages/home.dart';
 import '/pages/tabs.dart';
-import '/pages/profile.dart';
+// import '/pages/profile.dart';
 import '/pages/likes.dart';
 import '/pages/inbox.dart';
 import '/pages/notification.dart';
@@ -57,7 +58,7 @@ class DateApp extends StatelessWidget {
         Login.id: (context) => const Login(),
         Home.id: (context) => const Home(),
         TabsExample.id: (context) => const TabsExample(),
-        Profile.id: (context) => const Profile(),
+        // Profile.id: (context) => const Profile(),
         Inbox.id: (context) => const Inbox(),
         Likes.id: (context) => const Likes(),
         Notifications.id: (context) => const Notifications(),
@@ -65,7 +66,6 @@ class DateApp extends StatelessWidget {
         // Setting.id: (context) => const Setting(),
         EditProfile.id: (context) => const EditProfile(),
         // Chat.id: (context) => const Chat(),
-        // FriendProfile.id: (context) => const FriendProfile(personInfo: MongoDatabase.myAcc.info),
         // Verification.id: (context) => const Verification(),
         MyProfile.id: (context) => const MyProfile(),
       },

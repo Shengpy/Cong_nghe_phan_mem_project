@@ -1,12 +1,12 @@
 
 import 'package:flutter_application_1/class/Account.dart';
 import 'package:flutter_application_1/class/database.dart';
-import '/pages/friend_profile.dart';
+import '/pages/profile.dart';
 import '/pages/EditProfile.dart';
 // import '/pages/setting.dart';
 import 'package:flutter/material.dart';
 import '../components/styles.dart' as style;
-import 'package:firebase_storage/firebase_storage.dart';
+// import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
@@ -20,12 +20,7 @@ class MyProfile extends StatefulWidget {
 }
 
 class MyProfileState extends State<MyProfile> {
-  List<String> images = [
-    'assets/images/1.jpg',
-    'assets/images/2.jpg',
-    'assets/images/3.jpg',
-    'assets/images/4.jpg',
-  ];
+  
   // double deviceWidth;
   int tabID = 1;
   bool val1 = true;
@@ -42,7 +37,7 @@ class MyProfileState extends State<MyProfile> {
   String phoneNumber = MongoDatabase.myAcc.info.phoneNumber;
   String image = MongoDatabase.myAcc.info.image;
   List<Account> friends = [];
-  String imageUrl = '';
+  String imageUrl = MongoDatabase.myAcc.info.image;
   void changeData(){
     setState(() {
       name = MongoDatabase.myAcc.info.name;
@@ -101,9 +96,9 @@ class MyProfileState extends State<MyProfile> {
           stream: FirebaseFirestore.instance.collection('users').doc(MongoDatabase.myAcc.username).collection('images').snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return CircularProgressIndicator(); // Display a loading indicator
+              return const CircularProgressIndicator(); // Display a loading indicator
             }
-
+          
             imageUrl = snapshot.data!.docs.isNotEmpty
                 ? snapshot.data!.docs.first['downloadURL'] as String
                 : ''; 
@@ -303,7 +298,7 @@ class MyProfileState extends State<MyProfile> {
                   children: friends.map((friend) {
                     return InkWell(
                       onTap: () async {
-                          await Navigator.push(context, MaterialPageRoute(builder: (context) => FriendProfile(personInfo: friend)));
+                          await Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(personInfo: friend)));
                         },
                       child: Column(
                         children: [

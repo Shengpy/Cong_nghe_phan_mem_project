@@ -12,10 +12,9 @@ import 'package:path_provider/path_provider.dart';
 
 
 Future<void> uploadImageFromAsset(String user, String assetPath) async {
-  Reference ref = FirebaseStorage.instance.ref().child("${user}/images").child("avatar");
+  Reference ref = FirebaseStorage.instance.ref().child("$user/images").child("avatar");
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  try {
     // Load the asset image as a ByteData
     ByteData byteData = await rootBundle.load(assetPath);
     List<int> bytes = byteData.buffer.asUint8List();
@@ -38,9 +37,7 @@ Future<void> uploadImageFromAsset(String user, String assetPath) async {
 
     // Delete the temporary file
     await tempFile.delete();
-  } catch (error) {
-    print("Error uploading image: $error");
-  }
+ 
 }
 
 class Signup extends StatefulWidget {

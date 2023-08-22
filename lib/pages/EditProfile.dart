@@ -1,7 +1,7 @@
 // ignore_for_file: file_names
 
 import 'dart:io';
-import 'dart:typed_data';
+// import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_storage/firebase_storage.dart';
@@ -33,7 +33,7 @@ class EditProfileState extends State<EditProfile> {
   String phoneNumber = MongoDatabase.myAcc.info.phoneNumber == '' ? '' : MongoDatabase.myAcc.info.phoneNumber;
   String job = MongoDatabase.myAcc.info.job == '' ? '' : MongoDatabase.myAcc.info.job;
   String sexualOrentation = MongoDatabase.myAcc.info.sexualOrentation== '' ? 'Other' : MongoDatabase.myAcc.info.sexualOrentation;
-  String describe = MongoDatabase.myAcc.info.describe == '' ? 'Set your description' : MongoDatabase.myAcc.info.describe;
+  String describe = MongoDatabase.myAcc.info.describe == '' ? '' : MongoDatabase.myAcc.info.describe;
   String gender = MongoDatabase.myAcc.info.gender== '' ? 'Other' : MongoDatabase.myAcc.info.gender;
 
   String temp = MongoDatabase.myAcc.info.gender== '' ? 'Other' : MongoDatabase.myAcc.info.gender;
@@ -52,11 +52,13 @@ class EditProfileState extends State<EditProfile> {
   void initState() {
     super.initState();
     if (MongoDatabase.myAcc.info.birthday != '')
+    {
       birthday = DateTime.parse(MongoDatabase.myAcc.info.birthday);
+    }
     else
+    {
       birthday = DateTime.now();
-
-    
+    }  
   }
   var imageUrl;
   String user = MongoDatabase.myAcc.username;
@@ -71,32 +73,59 @@ class EditProfileState extends State<EditProfile> {
       if(img != null)
       {
         _file =File(img.path);
+        image = _file.toString();
       }
     });
   }
+
+
   // CollectionReference _reference = FirebaseFirestore.instance.collection();
   Future uploadImage() async{
-    Reference ref = FirebaseStorage.instance.ref().child("${user}/images").child("avatar");
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-    
+    Reference ref = FirebaseStorage.instance.ref().child("$user/images").child("avatar");
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     if(_file  != null){
-      Uint8List fileBytes = await _file!.readAsBytes();
-      TaskSnapshot snapshot =  await ref.putData(fileBytes);
 
-      String downloadURL = await  snapshot.ref.getDownloadURL();
+     
+      TaskSnapshot taskSnapshot = await ref.putFile(_file!);
+      String downloadURL = await taskSnapshot.ref.getDownloadURL();
+      
+       QuerySnapshot initialSnapshot = await firebaseFirestore
+        .collection("users")
+        .doc(user)
+        .collection('images')
+        .orderBy(FieldPath.documentId)
+        .limit(1)
+        .get();
 
-      await firestore.collection("users").doc(user).collection('images').add({
-        'downloadURL': downloadURL,
-
-      });
-
-      setState(() {
-        image = downloadURL;
-         
-      });
+    String initialDocumentId = '';
+    if (initialSnapshot.docs.isNotEmpty) {
+      initialDocumentId = initialSnapshot.docs.first.id;
     }
-  }
 
+    // Use the retrieved document ID to add the new image before it
+    await firebaseFirestore
+        .collection("users")
+        .doc(user)
+        .collection('images')
+        .doc(initialDocumentId)
+        .set({
+          'downloadURL':downloadURL,
+
+        });      
+    DocumentSnapshot s = await firebaseFirestore
+        .collection("users")
+        .doc(user)
+        .collection('images')
+        .doc(initialDocumentId)
+        .get();
+
+    if (s.exists) {
+      String downloadURL = s['downloadURL'] as String;
+      image = downloadURL;
+    }
+    
+  }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -143,7 +172,7 @@ class EditProfileState extends State<EditProfile> {
                           stream: FirebaseFirestore.instance.collection('users').doc(user).collection('images').snapshots(),
                           builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                             if (!snapshot.hasData) {
-                              return CircularProgressIndicator(); // Display a loading indicator
+                              return const CircularProgressIndicator(); // Display a loading indicator
                             }
 
                             
@@ -156,7 +185,9 @@ class EditProfileState extends State<EditProfile> {
                               backgroundImage: imageUrl != null && _file == null ? 
                         
                                     NetworkImage(imageUrl)
-                                  : Image.file(_file!).image,
+
+                                  : Image.file(_file!).image
+                                    ,
                               radius: 70,
                             );
                           },
@@ -176,7 +207,8 @@ class EditProfileState extends State<EditProfile> {
                             ),
                             child: IconButton(
                               onPressed: () async {
-                                selectImage();
+                                await selectImage();
+                                
                                 // imageUrl = await FirebaseStorage.instance.ref(imagePath).getDownloadURL();
                                 // setState(() {});
                               },
@@ -208,7 +240,7 @@ class EditProfileState extends State<EditProfile> {
 
               ListTile(
                 tileColor: Colors.white,
-                title: Text('Choose your birthday'),
+                title: const Text('Choose your birthday'),
                 subtitle: Text(DateFormat('yyyy-MM-dd').format(birthday)),
 
                 // subtitle: Text('${birthday.toLocal()}'.split(' ')[0]),
@@ -394,12 +426,12 @@ class EditProfileState extends State<EditProfile> {
                           
                            if(_file == null){
 
-                             image =   imageUrl;
+                             image = imageUrl;
                            }
-                          
-                           
-                          uploadImage();
-                          
+                           else{
+                              await uploadImage();
+                           }
+         
                           p.set(name, age ,birth_string, address, gender, phoneNumber, job, sexualOrentation, describe, image, selectHobbies);
                           
                           await MongoDatabase.updateInfo(MongoDatabase.myAcc.username, p);

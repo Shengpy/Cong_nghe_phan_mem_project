@@ -2,7 +2,7 @@
 import 'package:flutter_application_1/class/database.dart';
 
 import '../class/Account.dart';
-import '/pages/friend_profile.dart';
+import '/pages/profile.dart';
 import 'package:flutter/material.dart';
 import '../components/styles.dart' as style;
 
@@ -72,7 +72,7 @@ class LikesState extends State<Likes> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => FriendProfile(personInfo: favoritesUsers[index])));
+                                builder: (context) => Profile(personInfo: favoritesUsers[index])));
                       },
                       child: Row(
                         children: <Widget>[

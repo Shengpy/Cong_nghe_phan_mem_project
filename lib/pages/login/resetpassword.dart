@@ -146,17 +146,18 @@ class _ResetPasswordState extends State<ResetPassword> {
                         // ignore: use_build_context_synchronously
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
+                            duration: Duration(seconds: 1),
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                             width: 200,
-                            backgroundColor:
-                                // ignore: use_build_context_synchronously
-                                Theme.of(context).colorScheme.secondary,
+                            backgroundColor: Colors.pink,
+
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
                             behavior: SnackBarBehavior.floating,
-                            content: const Text(
-                                "Your password has been reset successfully"),
+                            content: const Text("Reset successfully", textAlign: TextAlign.center),
                           ),
+                        
                         );
                         // ignore: use_build_context_synchronously
                         Navigator.pop(context);

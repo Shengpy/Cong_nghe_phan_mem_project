@@ -30,9 +30,7 @@ class NotificationsState extends State<Notifications>
     getNotification();
   }
   final List<Notification> _elements = [
-    // Notification(content:'Khang want to add friend',date:formattedDate),
-    // Notification(content:'You are stupid',date:formattedDate),
-    // Notification(content:'You are hacked by Sheng',date:formattedDate),
+
   ];
   void getNotification(){
     List<Account> listAcc=[];

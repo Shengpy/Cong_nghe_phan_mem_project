@@ -63,7 +63,7 @@ class Person{
     this.describe = describe;
     this.image = image;
     this.hobby = hobby;
-    this.email = MongoDatabase.myAcc.info.email;
+    email = MongoDatabase.myAcc.info.email;
     chattingPersons = MongoDatabase.myAcc.info.chattingPersons;
     likedMe = MongoDatabase.myAcc.info.likedMe;
   }

@@ -5,7 +5,7 @@ import '../class/database.dart';
 import '../values/loginstatus.dart';
 import '/class/Account.dart';
 import '/pages/login/login.dart';
-
+import 'profile.dart';
 import '/pages/chat.dart';
 import '/pages/filter.dart';
 import '/class/FilterSearch.dart';
@@ -110,31 +110,37 @@ class HomeState extends State<Home> with SingleTickerProviderStateMixin {
     }
     );
   }
-  void generateCards(List<Account> genAcc){
-    if (genAcc.isEmpty){
-      genAcc.add(Account());
-    }
-    cards = List.generate(
+  void generateCards(List<Account> genAcc) {
+  if (genAcc.isEmpty) {
+    genAcc.add(Account());
+  }
+  
+  cards = List.generate(
     genAcc.length,
     (int index) {
-      return Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16.0),
-          boxShadow: const [
-            BoxShadow(
-              offset: Offset(0, 17),
-              blurRadius: 23.0,
-              spreadRadius: -13.0,
-              color: Colors.black54,
-            )
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(16.0),
-          child: Image.network(
-            genAcc[index].info.image,
-            fit: BoxFit.cover,
+      return GestureDetector(
+        onTap: () async {
+          await Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(personInfo: genAcc[index])));
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16.0),
+            boxShadow: const [
+              BoxShadow(
+                offset: Offset(0, 17),
+                blurRadius: 23.0,
+                spreadRadius: -13.0,
+                color: Colors.black54,
+              )
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16.0),
+            child: Image.network(
+              genAcc[index].info.image,
+              fit: BoxFit.cover,
+            ),
           ),
         ),
       );
