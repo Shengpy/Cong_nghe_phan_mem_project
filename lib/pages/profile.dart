@@ -73,6 +73,18 @@ class ProfileState extends State<Profile> {
         backgroundColor: Colors.white,
         iconTheme: const IconThemeData(color: Colors.black87),
         elevation: 0,
+        actions: [
+        IconButton(
+          onPressed: () {
+            // Navigate to report page
+            //!!!report user personInfo
+          },
+          icon: const Icon(
+            Icons.report,
+            size: 30,
+          ),
+        ),
+      ],
       ),
       backgroundColor: Colors.grey[200],
       body: _buildBody(),
